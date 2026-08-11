@@ -305,13 +305,37 @@ body.menu-open .drawer__nav a { opacity: 1; transform: none; }
 }
 .hero__slide.is-on img { animation: kenburns 26s 1.6s var(--ease) infinite alternate both; }
 @keyframes kenburns { from { transform: scale(1.06); } to { transform: scale(1.16) translate3d(-1.2%, -1%, 0); } }
+/* The scrim exists to make white type legible, not to tint the photograph.
+   It is heavy only where the words are — along the bottom, and behind the
+   header — and lets go of the frame everywhere else, so the place the
+   headline is naming is actually visible. */
+/* Two layers, with two different jobs. This one only has to hold the header
+   and settle the foot of the frame — it stays light, so the photograph is
+   still a photograph. */
 .hero__media::after {
   content: ''; position: absolute; inset: 0;
   background:
-    linear-gradient(to top, rgba(8,20,14,.96) 0%, rgba(8,20,14,.86) 22%, rgba(8,20,14,.46) 52%, rgba(8,20,14,.1) 74%, rgba(8,20,14,.5) 100%),
-    radial-gradient(140% 90% at 50% 105%, rgba(14,42,28,.7), transparent 62%);
+    linear-gradient(to bottom, rgba(6,16,12,.5) 0%, rgba(6,16,12,.19) 13%, rgba(6,16,12,0) 30%),
+    linear-gradient(to top, rgba(6,16,12,.42) 0%, rgba(6,16,12,.2) 16%, rgba(6,16,12,.05) 32%, rgba(6,16,12,0) 46%);
+}
+/* the type carries its own shadow as well, so a bright sky or a sunlit fall
+   behind a word cannot swallow it — the scrim alone would have to be much
+   heavier to do that job, and the photograph would pay for it */
+.hero h1, .hero__sub, .hero__eyebrow, .hero__meta {
+  text-shadow: 0 1px 2px rgba(4,12,9,.34), 0 10px 34px rgba(4,12,9,.3);
 }
 .hero__in { position: relative; z-index: 2; width: 100%; padding-bottom: clamp(3rem, 8vh, 6rem); padding-top: 8rem; }
+/* And this one follows the words. It begins a little above the eyebrow and
+   deepens towards the foot, so wherever the type happens to fall it is
+   carrying its own darkness with it — and the top of the frame, where the
+   place actually is, keeps its light. */
+.hero__in::before {
+  content: ''; position: absolute; z-index: -1; pointer-events: none;
+  top: 5rem; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%);
+  background: linear-gradient(to top,
+    rgba(6,16,12,.86) 0%, rgba(6,16,12,.78) 26%, rgba(6,16,12,.6) 52%,
+    rgba(6,16,12,.3) 78%, rgba(6,16,12,0) 100%);
+}
 .hero h1 {
   font-size: var(--t-3xl);
   letter-spacing: -.03em;
@@ -829,6 +853,19 @@ body.menu-open .drawer__nav a { opacity: 1; transform: none; }
 
 @media (min-width: 1100px) {
   .hero h1 { max-width: 13ch; }
+  /* on a wide screen the words sit left, so the shading can too — the right
+     of the frame, where the subject usually is, stays open */
+  .hero__media::after {
+    background:
+      linear-gradient(to bottom, rgba(6,16,12,.5) 0%, rgba(6,16,12,.18) 12%, rgba(6,16,12,0) 28%),
+      linear-gradient(to top, rgba(6,16,12,.34) 0%, rgba(6,16,12,.14) 18%, rgba(6,16,12,0) 38%);
+  }
+  /* on a wide screen the words are on the left, so their shading is too —
+     masked away before it reaches the right of the frame */
+  .hero__in::before {
+    -webkit-mask-image: linear-gradient(to right, #000 0 46%, rgba(0,0,0,.25) 74%, transparent 92%);
+    mask-image: linear-gradient(to right, #000 0 46%, rgba(0,0,0,.25) 74%, transparent 92%);
+  }
   .jlist { grid-template-columns: repeat(3, 1fr); }
   .jcard--wide { grid-column: span 3; }
   .jcard--wide { grid-template-columns: 1.1fr .9fr; }

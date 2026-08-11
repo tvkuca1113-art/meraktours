@@ -96,7 +96,13 @@
     slides.forEach(function (f, i) {
       if (!i) return;
       var im = $('img', f), src = im && im.getAttribute('data-src');
-      if (im && src) { im.setAttribute('src', src); im.removeAttribute('data-src'); }
+      if (im && src) {
+        var ss = im.getAttribute('data-srcset');
+        /* srcset first, so the browser picks the width it wants rather than
+           downloading the fallback and then replacing it */
+        if (ss) { im.setAttribute('srcset', ss); im.removeAttribute('data-srcset'); }
+        im.setAttribute('src', src); im.removeAttribute('data-src');
+      }
     });
     setInterval(function () {
       if (document.hidden || scrollY > innerHeight * 1.4) return;

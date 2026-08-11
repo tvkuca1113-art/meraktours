@@ -12,12 +12,25 @@ const CDN = 'https://images.unsplash.com/';
 const LOCAL_W = [480, 768, 1080, 1440];
 const nearest = (w) => LOCAL_W.find(x => x >= w) || LOCAL_W[LOCAL_W.length - 1];
 
+/* Two optional per-photograph controls, both handled by the CDN so they cost
+   nothing at runtime:
+     fp:   [x, y] or [x, y, zoom] — where the subject actually is, 0..1.
+           Without it the CDN crops from the centre, which decapitates a
+           waterfall sitting in the lower third of the frame.
+     tone: imgix parameters — `con` contrast, `sat` saturation, `bri`
+           brightness, `usm` unsharp mask. A big photograph behind white type
+           needs a little more contrast and a little sharpening than the same
+           photograph does in a gallery. */
+const knobs = (m) => (m.fp
+  ? `&crop=focalpoint&fp-x=${m.fp[0]}&fp-y=${m.fp[1]}${m.fp[2] ? `&fp-z=${m.fp[2]}` : ''}`
+  : '') + (m.tone ? `&${m.tone}` : '');
+
 export const photoUrl = (key, w = 1440, q = 74) =>
   media[key].local
     ? `/assets/photos/${media[key].local}-${nearest(w)}.jpg`
-    : `${CDN}${media[key].id}?auto=format&fit=crop&w=${w}&q=${q}`;
+    : `${CDN}${media[key].id}?auto=format&fit=crop&w=${w}&q=${q}${knobs(media[key])}`;
 
-/* fixed-ratio crop, used for the photo pins standing on the 3D map */
+/* fixed-ratio crop, for the small standing photographs */
 export const photoCrop = (key, w, h, q = 70) =>
   media[key].local
     ? `/assets/photos/${media[key].local}-${nearest(w)}.jpg`
@@ -28,16 +41,31 @@ export const photoCrop = (key, w, h, q = 70) =>
  * so we get modern formats without hosting binaries ourselves.
  */
 export function img(key, {
-  sizes = '100vw', max = 2400, cls = '', loading = 'lazy', priority = false, ratio = '', style = ''
+  sizes = '100vw', max = 2400, cls = '', loading = 'lazy', priority = false, ratio = '', style = '', q = 74
 } = {}) {
   const m = media[key];
   if (!m) throw new Error('Unknown media key: ' + key);
   const widths = (m.local ? LOCAL_W : WIDTHS).filter(w => w <= max);
-  const srcset = widths.map(w => `${photoUrl(key, w)} ${w}w`).join(', ');
-  return `<img src="${photoUrl(key, Math.min(1080, max))}" srcset="${srcset}" sizes="${sizes}"
+  const srcset = widths.map(w => `${photoUrl(key, w, q)} ${w}w`).join(', ');
+  return `<img src="${photoUrl(key, Math.min(1080, max), q)}" srcset="${srcset}" sizes="${sizes}"
     alt="${esc(m.alt)}" ${ratio ? `width="${ratio[0]}" height="${ratio[1]}"` : ''}
     loading="${priority ? 'eager' : loading}" decoding="${priority ? 'sync' : 'async'}"
     ${priority ? 'fetchpriority="high"' : ''} ${cls ? `class="${cls}"` : ''} ${style ? `style="${style}"` : ''}>`;
+}
+
+/* The hero rotates through four photographs. Only the first is fetched up
+   front; the rest carry their srcset on data- attributes and are promoted to
+   real ones once the page has settled, so three large images don't compete
+   with the one the visitor is actually looking at. */
+export function heroImg(key, { first = false, q = 82 } = {}) {
+  const m = media[key];
+  if (!m) throw new Error('Unknown media key: ' + key);
+  const widths = (m.local ? LOCAL_W : WIDTHS);
+  const srcset = widths.map(w => `${photoUrl(key, w, q)} ${w}w`).join(', ');
+  if (first) return img(key, { sizes: '100vw', priority: true, max: 2400, q });
+  return `<img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+    data-src="${photoUrl(key, 1440, q)}" data-srcset="${srcset}" sizes="100vw"
+    width="1600" height="1000" decoding="async">`;
 }
 
 /* WhatsApp deep link with a pre-filled message */

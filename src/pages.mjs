@@ -1,6 +1,6 @@
 import { site, tours, pillars, quotes, interests, faqs, media, included, notIncluded } from './data.mjs';
 import {
-  page, img, icons, esc, wa, waGeneral, includedSection, ctaSection, faqSection, photoUrl, photoCrop, archDivider
+  page, img, heroImg, icons, esc, wa, waGeneral, includedSection, ctaSection, faqSection, photoUrl, photoCrop, archDivider
 } from './templates.mjs';
 import { atlasSvg, routePath } from './atlas.mjs';
 
@@ -262,12 +262,11 @@ export function home() {
   <div class="hero__media" data-heroslides>
     ${[
       ['heroMostar', 'Mostar'],
-      ['kravice', 'Kravice Waterfalls'],
+      ['kraviceFalls', 'Kravice Waterfalls'],
       ['sarajevoSquare', 'Sarajevo'],
       ['blagajTekke', 'Blagaj']
-    ].map(([k, place], i) => i === 0
-      ? `<figure class="hero__slide is-on" data-place="${esc(place)}">${img(k, { sizes: '100vw', priority: true, max: 2400 })}</figure>`
-      : `<figure class="hero__slide" data-place="${esc(place)}"><img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" data-src="${photoCrop(k, 1800, 2200)}" width="1800" height="2200" decoding="async"></figure>`
+    ].map(([k, place], i) =>
+      `<figure class="hero__slide${i ? '' : ' is-on'}" data-place="${esc(place)}">${heroImg(k, { first: !i })}</figure>`
     ).join('')}
   </div>
   <div class="wrap hero__in">
