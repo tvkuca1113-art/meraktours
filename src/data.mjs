@@ -55,48 +55,59 @@ export const site = {
    full-bleed pictures only; galleries stay untouched. */
 const HERO_TONE = 'con=7&sat=4&usm=14';
 
+/* The photographs that run full width behind type. A portrait photograph
+   cannot do this job: cropped to a wide card it shows a band out of its
+   middle and the subject — the waterfall, the bridge — falls outside the
+   frame entirely. build.mjs refuses to build if one of these is portrait. */
+export const heroRotation = [
+  ['mostarReflection', 'Mostar'],
+  ['kravice2',         'Kravice Waterfalls'],
+  ['sarajevoSquare',   'Sarajevo'],
+  ['blagajTekke',      'Blagaj']
+];
+
 export const media = {
-  heroMostar:        { id: 'photo-1784694461396-98717a83ace5', alt: 'Stari Most, the Ottoman stone bridge over the Neretva, with Mostar Old Town and mountains behind', by: 'Josip Ivanković', user: 'piak', page: 'https://unsplash.com/photos/P9ezYYYPmpg', place: 'Stari Most, Mostar', tone: HERO_TONE },
-  mostarReflection:  { id: 'photo-1504730461252-26343bc973f1', alt: 'The Old Bridge in Mostar reflected in the still emerald water of the Neretva', by: 'Faruk Kaymak', user: 'fkaymak', page: 'https://unsplash.com/photos/VKz0LHnGzU0', place: 'Mostar' },
-  mostarGreenRiver:  { id: 'photo-1643054136954-684629fedc90', alt: 'The Old Bridge of Mostar above the green Neretva river', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/8_QKTRYoVbc', place: 'Mostar' },
-  mostarOldTown:     { id: 'photo-1761383341037-81c78353cb91', alt: 'Cobbled bazaar street in Mostar Old Town with market stalls, shops and the stone clock tower', by: 'Josip Ivanković', user: 'piak', page: 'https://unsplash.com/photos/ZjS2emXzRZ8', place: 'Mostar Old Town' },
-  mostarBazaar:      { id: 'photo-1628828098981-9856314fc978', alt: 'Visitors walking through the Kujundžiluk bazaar street in Mostar Old Town', by: 'mana5280', user: 'mana5280', page: 'https://unsplash.com/photos/vwk17ByFLKw', place: 'Mostar Old Town' },
-  mostarDiver:       { id: 'photo-1544673442-5ef41de781ce', alt: 'People gathered on Stari Most in Mostar watching a diver above the Neretva', by: 'Darcey Beau', user: 'darceybeau', page: 'https://unsplash.com/photos/Aj-a_XCTWcc', place: 'Stari Most, Mostar' },
-  mostarArch:        { id: 'photo-1676064905210-25bdafa708a7', alt: 'The arch of Stari Most seen from the bank of the Neretva', by: 'Anna Jewels', user: 'earthpeek', page: 'https://unsplash.com/photos/UBYgDsAdwOI', place: 'Mostar' },
-  mostarAerial:      { id: 'photo-1535627565086-13f55c100c0d', alt: 'View over Mostar with Stari Most spanning the Neretva and the old town rooftops', by: 'Anton Sharov', user: 'antonsharov', page: 'https://unsplash.com/photos/cPSZkNTGF5I', place: 'Mostar' },
+  heroMostar:        { id: 'photo-1784694461396-98717a83ace5', alt: 'Stari Most, the Ottoman stone bridge over the Neretva, with Mostar Old Town and mountains behind', by: 'Josip Ivanković', user: 'piak', page: 'https://unsplash.com/photos/P9ezYYYPmpg', px: [4642, 6963], lum: 0.499, place: 'Stari Most, Mostar' },
+  mostarReflection:  { id: 'photo-1504730461252-26343bc973f1', alt: 'The Old Bridge in Mostar reflected in the still emerald water of the Neretva', by: 'Faruk Kaymak', user: 'fkaymak', page: 'https://unsplash.com/photos/VKz0LHnGzU0', tone: HERO_TONE, px: [6000, 4000], lum: 0.560, place: 'Mostar' },
+  mostarGreenRiver:  { id: 'photo-1643054136954-684629fedc90', alt: 'The Old Bridge of Mostar above the green Neretva river', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/8_QKTRYoVbc', px: [4000, 3000], lum: 0.373, place: 'Mostar' },
+  mostarOldTown:     { id: 'photo-1761383341037-81c78353cb91', alt: 'Cobbled bazaar street in Mostar Old Town with market stalls, shops and the stone clock tower', by: 'Josip Ivanković', user: 'piak', page: 'https://unsplash.com/photos/ZjS2emXzRZ8', px: [4672, 7008], lum: 0.344, place: 'Mostar Old Town' },
+  mostarBazaar:      { id: 'photo-1628828098981-9856314fc978', alt: 'Visitors walking through the Kujundžiluk bazaar street in Mostar Old Town', by: 'mana5280', user: 'mana5280', page: 'https://unsplash.com/photos/vwk17ByFLKw', px: [7264, 5335], lum: 0.254, place: 'Mostar Old Town' },
+  mostarDiver:       { id: 'photo-1544673442-5ef41de781ce', alt: 'People gathered on Stari Most in Mostar watching a diver above the Neretva', by: 'Darcey Beau', user: 'darceybeau', page: 'https://unsplash.com/photos/Aj-a_XCTWcc', px: [3893, 4866], lum: 0.453, place: 'Stari Most, Mostar' },
+  mostarArch:        { id: 'photo-1676064905210-25bdafa708a7', alt: 'The arch of Stari Most seen from the bank of the Neretva', by: 'Anna Jewels', user: 'earthpeek', page: 'https://unsplash.com/photos/UBYgDsAdwOI', px: [2160, 2700], lum: 0.454, place: 'Mostar' },
+  mostarAerial:      { id: 'photo-1535627565086-13f55c100c0d', alt: 'View over Mostar with Stari Most spanning the Neretva and the old town rooftops', by: 'Anton Sharov', user: 'antonsharov', page: 'https://unsplash.com/photos/cPSZkNTGF5I', px: [3312, 2650], lum: 0.340, place: 'Mostar' },
   fortica:           { local: 'fortica', alt: 'The view over Mostar and the Neretva valley from the Fortica viewpoint, with the skywalk on the ridge', by: 'Merak Tours', own: true, place: 'Fortica, Mostar' },
-  mostarValley:      { id: 'photo-1569086038412-d20a387dffc1', alt: 'Mostar and the Neretva valley seen from the hillside above the town', by: 'Kenneth Sonntag', user: 'kennethsonntag', page: 'https://unsplash.com/photos/XVv47YyUBXM', place: 'Mostar' },
-  mostarWindow:      { id: 'photo-1628830861270-036f22f90e64', alt: 'Carved wooden window frame on an old house in Mostar', by: 'mana5280', user: 'mana5280', page: 'https://unsplash.com/photos/p2i2s0gU2iU', place: 'Mostar' },
-  blagajTekke:       { id: 'photo-1652287350277-db5ba07dfd46', alt: 'The white Blagaj Tekke at the foot of the limestone cliff where the Buna river springs', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/HP-OVRpg1Xc', tone: HERO_TONE, place: 'Blagaj' },
-  blagajDusk:        { id: 'photo-1772664587058-4bc625e12315', alt: 'The Blagaj Tekke dervish monastery set into the rock face at dusk', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/irRzmw1NPrQ', place: 'Blagaj' },
-  blagajBuna:        { id: 'photo-1634796607963-9e3726f5264f', alt: 'Clear turquoise water at the source of the Buna river beneath the cliffs at Blagaj', by: 'Bakir Custovic', user: 'bacust_', page: 'https://unsplash.com/photos/GRVJoavJD-Y', place: 'Blagaj' },
-  pocitelj:          { id: 'photo-1772663221140-3177d407b0b1', alt: 'The historic village of Počitelj with its mosque and tower above the Neretva valley', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/blI_h-Kf3RE', place: 'Počitelj' },
-  pocitelj2:         { id: 'photo-1772663271932-4eb45c754f8f', alt: 'The stone village of Počitelj beside the winding Neretva', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/tY6l0_5DNX8', place: 'Počitelj' },
-  pociteljStairs:    { id: 'photo-1772663187575-ee6216385425', alt: 'Stone stairway and old walls in Počitelj', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/eqnjOmw89NU', place: 'Počitelj' },
-  pociteljTower:     { id: 'photo-1772663182135-00a3c7b9982c', alt: 'Stone houses and the Kula fortress on the hillside at Počitelj', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/nHcKRgjnv5Y', place: 'Počitelj' },
+  mostarValley:      { id: 'photo-1569086038412-d20a387dffc1', alt: 'Mostar and the Neretva valley seen from the hillside above the town', by: 'Kenneth Sonntag', user: 'kennethsonntag', page: 'https://unsplash.com/photos/XVv47YyUBXM', tone: HERO_TONE, px: [6000, 4000], lum: 0.474, place: 'Mostar' },
+  mostarWindow:      { id: 'photo-1628830861270-036f22f90e64', alt: 'Carved wooden window frame on an old house in Mostar', by: 'mana5280', user: 'mana5280', page: 'https://unsplash.com/photos/p2i2s0gU2iU', px: [4484, 5132], lum: 0.368, place: 'Mostar' },
+  blagajTekke:       { id: 'photo-1652287350277-db5ba07dfd46', alt: 'The white Blagaj Tekke at the foot of the limestone cliff where the Buna river springs', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/HP-OVRpg1Xc', tone: HERO_TONE, px: [4000, 3000], lum: 0.458, place: 'Blagaj' },
+  blagajDusk:        { id: 'photo-1772664587058-4bc625e12315', alt: 'The Blagaj Tekke dervish monastery set into the rock face at dusk', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/irRzmw1NPrQ', px: [6240, 4160], lum: 0.333, place: 'Blagaj' },
+  blagajBuna:        { id: 'photo-1634796607963-9e3726f5264f', alt: 'Clear turquoise water at the source of the Buna river beneath the cliffs at Blagaj', by: 'Bakir Custovic', user: 'bacust_', page: 'https://unsplash.com/photos/GRVJoavJD-Y', px: [2667, 4000], lum: 0.325, place: 'Blagaj' },
+  pocitelj:          { id: 'photo-1772663221140-3177d407b0b1', alt: 'The historic village of Počitelj with its mosque and tower above the Neretva valley', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/blI_h-Kf3RE', px: [6240, 4160], lum: 0.421, place: 'Počitelj' },
+  pocitelj2:         { id: 'photo-1772663271932-4eb45c754f8f', alt: 'The stone village of Počitelj beside the winding Neretva', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/tY6l0_5DNX8', px: [6240, 4160], lum: 0.373, place: 'Počitelj' },
+  pociteljStairs:    { id: 'photo-1772663187575-ee6216385425', alt: 'Stone stairway and old walls in Počitelj', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/eqnjOmw89NU', px: [6240, 4160], lum: 0.436, place: 'Počitelj' },
+  pociteljTower:     { id: 'photo-1772663182135-00a3c7b9982c', alt: 'Stone houses and the Kula fortress on the hillside at Počitelj', by: 'Fatih Beki', user: 'mfbeki', page: 'https://unsplash.com/photos/nHcKRgjnv5Y', px: [6240, 4160], lum: 0.530, place: 'Počitelj' },
   /* The hero and the tour cover want the falls in open sunlight with the pool
      showing. The forest-framed frames below are gallery pictures — beautiful
      small, unreadable at full bleed. */
-  kraviceFalls:      { id: 'photo-1752159276871-30b5aa5e0241', alt: 'Kravice Waterfalls cascading into the turquoise pool below, in summer sun', by: 'Stanisław Lul', user: 'stchuu', page: 'https://unsplash.com/photos/Ilsqyn9As_Q', place: 'Kravice Waterfall, Studenci', tone: HERO_TONE },
-  kraviceSummer:     { id: 'photo-1733254145554-e49274aa95df', alt: 'The full width of Kravice Waterfalls in high summer water', by: 'Francesco Torsello', user: 'fratorsello', page: 'https://unsplash.com/photos/A3yK31IGLIE', place: 'Kravice Waterfall, Studenci' },
-  kravice:           { id: 'photo-1757759170092-bb9d6ff5bc4f', alt: 'The wide amphitheatre of Kravice Waterfalls falling into a green pool', by: 'Stanisław Lul', user: 'stchuu', page: 'https://unsplash.com/photos/3rNk8P03wNs', place: 'Kravice Waterfall' },
-  kravice2:          { id: 'photo-1680487927957-661c1bdd90cd', alt: 'Kravice Waterfalls falling into an emerald pool in Herzegovina', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/NFGq1SSVWCA', place: 'Kravice Waterfall' },
-  kraviceSwim:       { id: 'photo-1677560691918-762bf76472b4', alt: 'People swimming in the river beside Kravice Waterfalls', by: 'Jo Barnes', user: 'yourlifestylebusiness', page: 'https://unsplash.com/photos/W2Fj8SQeQnY', place: 'Kravica Nature Park' },
-  kraviceForest:     { id: 'photo-1692563318127-49c18bbfc31d', alt: 'Kravice Waterfall surrounded by dense green forest', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/shj0Pg9HrH4', place: 'Kravice Waterfall' },
-  jablanica:         { id: 'photo-1626026579686-39fdf58e3b67', alt: 'The green Neretva at Jablanica, framed by mountains', by: 'Adnan Hajvazovic', user: 'adnanhazz', page: 'https://unsplash.com/photos/F-i_vAk_xXs', place: 'Jablanica' },
-  neretvaCanyon:     { id: 'photo-1675907353678-95d401c6d2dc', alt: 'The Neretva winding through its canyon near Jablanica', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/u1XLrGhaaoo', place: 'Bijela, near Jablanica' },
-  neretvaTeal:       { id: 'photo-1698863985793-9885b29da3bb', alt: 'The teal Neretva running below green hillsides at Mostar', by: 'Anesa Atlić', user: 'aatlic1', page: 'https://unsplash.com/photos/BtnSKNYwycU', place: 'Mostar' },
-  sarajevoSquare:    { id: 'photo-1683764681443-c85ff83109b4', alt: 'The main square of Baščaršija, Sarajevo’s old bazaar quarter', by: 'Hongbin', user: 'hbsun2013', page: 'https://unsplash.com/photos/OT8bxxMA3j0', tone: HERO_TONE, place: 'Baščaršija, Sarajevo' },
-  sarajevoPigeons:   { id: 'photo-1636041417222-1305988d38a0', alt: 'Pigeons and passers-by on the square in Sarajevo old town, a minaret behind', by: 'Lothar Boris Piltz', user: 'lotharborispiltz', page: 'https://unsplash.com/photos/nk6N5vCDbDE', place: 'Sarajevo' },
-  sarajevoNight:     { id: 'photo-1705451298117-66d3579e722a', alt: 'Lantern-lit lanes of Baščaršija at night in Sarajevo', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/r77YIL-jmXY', place: 'Baščaršija, Sarajevo' },
-  sarajevoStreet:    { id: 'photo-1777918210754-8d8fc75ed4c5', alt: 'Narrow cobbled old town street in Sarajevo with a minaret and green hills behind', by: 'Alexei Kramskoi', user: 'rzhavii', page: 'https://unsplash.com/photos/DxcKvmHI_Ko', place: 'Sarajevo' },
-  sarajevoRooftops:  { id: 'photo-1763787002975-5aefe199191b', alt: 'Sarajevo’s old town rooftops seen from above', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/8quwwLg1Mgc', place: 'Sarajevo' },
-  sarajevoView:      { id: 'photo-1680220700316-41ec6aa2f805', alt: 'Sarajevo seen from a viewpoint above the valley', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/sNavsW2j9es', place: 'Sarajevo' },
-  bosnianCoffee:     { id: 'photo-1605958759017-9c38541ad9e5', alt: 'Traditional Bosnian coffee served in a small cup', by: 'abdurahman iseini', user: 'bizzle_555', page: 'https://unsplash.com/photos/luCibs6BjK0', place: 'Sarajevo' },
-  craftStall:        { id: 'photo-1690323027889-cb2819e7f429', alt: 'Metal and ceramic vessels on a craft stall in Sarajevo’s old bazaar', by: 'Adél Grőber', user: 'ninszi', page: 'https://unsplash.com/photos/8GADbM3TZr8', place: 'Sarajevo' },
-  mountains:         { id: 'photo-1643581744816-51808de1c6fe', alt: 'Pine-covered mountain peaks on Zvijezda mountain in Bosnia and Herzegovina', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/c0qPcBksajU', place: 'Zvijezda' },
-  boracko:           { id: 'photo-1668200130005-f00145d1a82e', alt: 'Autumn morning over Boračko Lake, ringed by forest and mountains', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/gSAaF7qR42o', place: 'Boračko Lake' },
-  countryside:       { id: 'photo-1760865839125-615cca7fa2a9', alt: 'Old stone house among the green hills of the Počitelj countryside', by: 'Ivan Ovych', user: 'kehl', page: 'https://unsplash.com/photos/Gnww9wenuLI', place: 'Počitelj' }
+  kraviceFalls:      { id: 'photo-1752159276871-30b5aa5e0241', alt: 'Kravice Waterfalls cascading into the turquoise pool below, in summer sun', by: 'Stanisław Lul', user: 'stchuu', page: 'https://unsplash.com/photos/Ilsqyn9As_Q', px: [3147, 4721], lum: 0.365, place: 'Kravice Waterfall, Studenci' },
+  kraviceSummer:     { id: 'photo-1733254145554-e49274aa95df', alt: 'The full width of Kravice Waterfalls in high summer water', by: 'Francesco Torsello', user: 'fratorsello', page: 'https://unsplash.com/photos/A3yK31IGLIE', px: [2324, 3486], lum: 0.377, place: 'Kravice Waterfall, Studenci' },
+  kravice:           { id: 'photo-1757759170092-bb9d6ff5bc4f', alt: 'The wide amphitheatre of Kravice Waterfalls falling into a green pool', by: 'Stanisław Lul', user: 'stchuu', page: 'https://unsplash.com/photos/3rNk8P03wNs', px: [3872, 2592], lum: 0.442, place: 'Kravice Waterfall' },
+  kravice2:          { id: 'photo-1680487927957-661c1bdd90cd', alt: 'Kravice Waterfalls falling into an emerald pool in Herzegovina', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/NFGq1SSVWCA', tone: HERO_TONE, px: [4905, 2489], lum: 0.492, place: 'Kravice Waterfall' },
+  kraviceSwim:       { id: 'photo-1677560691918-762bf76472b4', alt: 'People swimming in the river beside Kravice Waterfalls', by: 'Jo Barnes', user: 'yourlifestylebusiness', page: 'https://unsplash.com/photos/W2Fj8SQeQnY', px: [4032, 3024], lum: 0.482, place: 'Kravica Nature Park' },
+  kraviceForest:     { id: 'photo-1692563318127-49c18bbfc31d', alt: 'Kravice Waterfall surrounded by dense green forest', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/shj0Pg9HrH4', px: [3406, 2718], lum: 0.490, place: 'Kravice Waterfall' },
+  jablanica:         { id: 'photo-1626026579686-39fdf58e3b67', alt: 'The green Neretva at Jablanica, framed by mountains', by: 'Adnan Hajvazovic', user: 'adnanhazz', page: 'https://unsplash.com/photos/F-i_vAk_xXs', px: [4032, 3024], lum: 0.561, place: 'Jablanica' },
+  neretvaCanyon:     { id: 'photo-1675907353678-95d401c6d2dc', alt: 'The Neretva winding through its canyon near Jablanica', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/u1XLrGhaaoo', tone: HERO_TONE, px: [4965, 2869], lum: 0.444, place: 'Bijela, near Jablanica' },
+  neretvaTeal:       { id: 'photo-1698863985793-9885b29da3bb', alt: 'The teal Neretva running below green hillsides at Mostar', by: 'Anesa Atlić', user: 'aatlic1', page: 'https://unsplash.com/photos/BtnSKNYwycU', px: [3456, 4608], lum: 0.367, place: 'Mostar' },
+  sarajevoSquare:    { id: 'photo-1683764681443-c85ff83109b4', alt: 'The main square of Baščaršija, Sarajevo’s old bazaar quarter', by: 'Hongbin', user: 'hbsun2013', page: 'https://unsplash.com/photos/OT8bxxMA3j0', tone: HERO_TONE, px: [6960, 4640], lum: 0.539, place: 'Baščaršija, Sarajevo' },
+  sarajevoPigeons:   { id: 'photo-1636041417222-1305988d38a0', alt: 'Pigeons and passers-by on the square in Sarajevo old town, a minaret behind', by: 'Lothar Boris Piltz', user: 'lotharborispiltz', page: 'https://unsplash.com/photos/nk6N5vCDbDE', px: [4928, 3264], lum: 0.452, place: 'Sarajevo' },
+  sarajevoNight:     { id: 'photo-1705451298117-66d3579e722a', alt: 'Lantern-lit lanes of Baščaršija at night in Sarajevo', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/r77YIL-jmXY', px: [2537, 3085], lum: 0.172, place: 'Baščaršija, Sarajevo' },
+  sarajevoStreet:    { id: 'photo-1777918210754-8d8fc75ed4c5', alt: 'Narrow cobbled old town street in Sarajevo with a minaret and green hills behind', by: 'Alexei Kramskoi', user: 'rzhavii', page: 'https://unsplash.com/photos/DxcKvmHI_Ko', px: [3264, 4896], lum: 0.428, place: 'Sarajevo' },
+  sarajevoRooftops:  { id: 'photo-1763787002975-5aefe199191b', alt: 'Sarajevo’s old town rooftops seen from above', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/8quwwLg1Mgc', px: [5184, 3456], lum: 0.423, place: 'Sarajevo' },
+  sarajevoView:      { id: 'photo-1680220700316-41ec6aa2f805', alt: 'Sarajevo seen from a viewpoint above the valley', by: 'Sporisevic Photography', user: 'sporisevicphotography', page: 'https://unsplash.com/photos/sNavsW2j9es', px: [5184, 3456], lum: 0.514, place: 'Sarajevo' },
+  bosnianCoffee:     { id: 'photo-1605958759017-9c38541ad9e5', alt: 'Traditional Bosnian coffee served in a small cup', by: 'abdurahman iseini', user: 'bizzle_555', page: 'https://unsplash.com/photos/luCibs6BjK0', px: [3335, 2668], lum: 0.685, place: 'Sarajevo' },
+  craftStall:        { id: 'photo-1690323027889-cb2819e7f429', alt: 'Metal and ceramic vessels on a craft stall in Sarajevo’s old bazaar', by: 'Adél Grőber', user: 'ninszi', page: 'https://unsplash.com/photos/8GADbM3TZr8', px: [2537, 3806], lum: 0.338, place: 'Sarajevo' },
+  mountains:         { id: 'photo-1643581744816-51808de1c6fe', alt: 'Pine-covered mountain peaks on Zvijezda mountain in Bosnia and Herzegovina', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/c0qPcBksajU', px: [3000, 4000], lum: 0.347, place: 'Zvijezda' },
+  boracko:           { id: 'photo-1668200130005-f00145d1a82e', alt: 'Autumn morning over Boračko Lake, ringed by forest and mountains', by: 'Mujo Hasanovic', user: 'mujoh', page: 'https://unsplash.com/photos/gSAaF7qR42o', px: [4000, 3000], lum: 0.478, place: 'Boračko Lake' },
+  countryside:       { id: 'photo-1760865839125-615cca7fa2a9', alt: 'Old stone house among the green hills of the Počitelj countryside', by: 'Ivan Ovych', user: 'kehl', page: 'https://unsplash.com/photos/Gnww9wenuLI', px: [6000, 4000], lum: 0.451, place: 'Počitelj' }
 };
 
 /* Places used by the 3D map — real coordinates */
@@ -196,9 +207,9 @@ export const tours = [
       { type: 'drive', to: 'Mostar', dur: '1 hour' },
       { type: 'point', time: '16:30', title: 'Mostar', sub: 'End location', note: 'Drop-off at your accommodation.', img: 'mostarReflection', tags: ['Drop-off'] }
     ],
-    hero: 'kraviceFalls',
-    cover: 'kraviceFalls',
-    gallery: ['kravice', 'pocitelj', 'kraviceSwim', 'pociteljStairs', 'kraviceSummer', 'pociteljTower', 'kraviceForest', 'countryside'],
+    hero: 'kravice2',
+    cover: 'kravice2',
+    gallery: ['kravice', 'pocitelj', 'kraviceSwim', 'pociteljStairs', 'kraviceFalls', 'pociteljTower', 'kraviceForest', 'kraviceSummer'],
     seoTitle: 'Počitelj & Kravice Waterfalls Tour from Mostar | Private Day Tour',
     seoDesc: 'A private 7–8 hour tour from Mostar to the Ottoman village of Počitelj and four hours at Kravice Waterfalls. Pickup and drop-off in Mostar, local guide, flexible pace.',
     keywords: 'Kravice waterfalls tour from Mostar, Počitelj tour, private tour Mostar, Herzegovina day trip'
@@ -238,8 +249,8 @@ export const tours = [
       { type: 'drive', to: 'Mostar', dur: '40 min' },
       { type: 'point', time: '16:30', title: 'Mostar', sub: 'End location', note: 'Drop-off at your accommodation.', img: 'mostarReflection', tags: ['Drop-off'] }
     ],
-    hero: 'jablanica',
-    cover: 'jablanica',
+    hero: 'mostarValley',
+    cover: 'mostarValley',
     gallery: ['fortica', 'jablanica', 'neretvaCanyon', 'mostarAerial', 'neretvaTeal', 'boracko', 'mountains', 'mostarGreenRiver'],
     seoTitle: 'Fortica, Mostar & Jablanica Tour | Private Day Tour from Mostar',
     seoDesc: 'A private 7–8 hour tour from Mostar to the Fortica viewpoint and Jablanica: scenic views, optional zipline, swing or skywalk, lunch and free time by the water.',

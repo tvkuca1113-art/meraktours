@@ -10,8 +10,37 @@ import { dirname, join } from 'node:path';
 import * as esbuild from 'esbuild';
 import subsetFont from 'subset-font';
 import { Resvg } from '@resvg/resvg-js';
-import { site, tours } from './src/data.mjs';
+import { site, tours, media, heroRotation } from './src/data.mjs';
 import { home, tourPage, createPage, creditsPage, notFound } from './src/pages.mjs';
+
+/* ---------------- the photographs that run full width ---------------------
+   A picture behind a headline is cropped hard: on a wide card it keeps a band
+   out of its middle and throws the rest away. A portrait photograph cannot
+   survive that — the waterfall ends up below the crop and what is left is
+   canopy. So the full-bleed slots are checked before anything is written, and
+   a portrait one stops the build rather than reaching the page.
+   Sizes and average luminance are measured values, recorded in data.mjs. */
+const FULL_BLEED = [
+  ...heroRotation.map(([k]) => [k, 'hero rotation']),
+  ...tours.flatMap(t => [[t.hero, `tour ${t.num} hero`], [t.cover, `tour ${t.num} cover`]]),
+  ['neretvaCanyon', 'create-your-journey hero']
+];
+const problems = [];
+for (const [key, where] of FULL_BLEED) {
+  const m = media[key];
+  if (!m) { problems.push(`${where}: unknown photo "${key}"`); continue; }
+  if (m.local) continue;                       // the client's own, handled by hand
+  if (!m.px) { problems.push(`${where}: ${key} has no measured size`); continue; }
+  const [w, h] = m.px;
+  if (h >= w) problems.push(`${where}: ${key} is ${w}x${h} — portrait. Full-bleed needs landscape.`);
+  else if (w / h < 1.2) problems.push(`${where}: ${key} is ${w}x${h} — too square for a wide crop.`);
+  if (m.lum != null && m.lum < 0.28) console.warn(`  note: ${key} is dark (luminance ${m.lum})`);
+  if (m.lum != null && m.lum > 0.60) console.warn(`  note: ${key} is very bright (luminance ${m.lum})`);
+}
+if (problems.length) {
+  console.error('\nFull-bleed photography problems:\n  ' + problems.join('\n  ') + '\n');
+  process.exit(1);
+}
 
 const OUT = 'dist';
 const write = (p, s) => { mkdirSync(dirname(join(OUT, p)), { recursive: true }); writeFileSync(join(OUT, p), s); };

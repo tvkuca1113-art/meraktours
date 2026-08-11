@@ -266,7 +266,10 @@ ${head(id + 'Live', ' atlas--live')} aria-hidden="true">
   <g clip-path="url(#${id}-clip)">
     <g class="atlas__view" data-live-view="1">
       <g class="atlas__routes">
-        ${routes.map((r, i) => `<path class="atlas__ghost" data-ghost="${i}" d="${r.hint}" vector-effect="non-scaling-stroke"/>`).join('')}
+        <!-- the ghost is the same road, drawn faintly ahead of the traveller.
+             It used to be a simplified polyline, which wandered off the drawn
+             line and read as a second, wrong route. -->
+        ${routes.map((r, i) => `<path class="atlas__ghost" data-ghost="${i}" d="${r.d}" vector-effect="non-scaling-stroke"/>`).join('')}
         ${routes.map((r, i) => `<path class="atlas__route${i ? '' : ' is-on'}" data-route="${i}" d="${r.d}" pathLength="1000"/>`).join('')}
       </g>
     </g>

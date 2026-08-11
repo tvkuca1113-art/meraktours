@@ -20,53 +20,52 @@ const SLOTS = [
     key: 'A', place: 'Mostar', word: 'Discover Bosnia.',
     note: 'Prva slika koju svako vidi. Stari most mora biti jasan.',
     shots: [
-      { id: 'photo-1784694461396-98717a83ace5', by: 'Josip Ivanković', now: true, what: 'Stari most, stari grad i planine iza' },
-      { id: 'photo-1535627565086-13f55c100c0d', by: 'Anton Sharov', what: 'Pogled odozgo — most, rijeka i krovovi zajedno' },
-      { id: 'photo-1544329095-a7c19df83018', by: 'Yu Siang Teo', what: 'Most s obale, kamene kuće i zelenilo' },
-      { id: 'photo-1628011032307-29c736b2ce93', by: 'mana5280', what: 'Iz zraka — Neretva i cijeli stari grad' },
-      { id: 'photo-1504730461252-26343bc973f1', by: 'Faruk Kaymak', what: 'Rano ujutro, most prazan, odraz u vodi' },
-      { id: 'photo-1629016727342-a0d2f2973878', by: 'Ilse', what: 'Most nad rijekom, danje svjetlo' },
-      { id: 'photo-1637739436963-023a1e4fd0ec', by: 'Daniel J. Schwarz', what: 'Most s građevinom u pozadini' },
-      { id: 'photo-1676064905210-25bdafa708a7', by: 'Anna Jewels', what: 'Luk mosta s obale Neretve' }
+      { id: 'photo-1504730461252-26343bc973f1', by: 'Faruk Kaymak', px: '6000×4000', lum: .560, now: true, what: 'NOVA — most u rano jutro, prazan, odraz u vodi' },
+      { id: 'photo-1544329095-a7c19df83018', by: 'Yu Siang Teo', px: '4032×3024', lum: .491, what: 'Most s obale, kamene kuće i zelenilo' },
+      { id: 'photo-1631621554517-a004faddf097', by: 'Đorđe Pandurević', px: '5184×3456', lum: .493, what: 'Rijeka kroz grad, planine okolo' },
+      { id: 'photo-1629016727342-a0d2f2973878', by: 'Ilse', px: '4012×2675', lum: .499, what: 'Most nad rijekom, danje svjetlo' },
+      { id: 'photo-1569086038412-d20a387dffc1', by: 'Kenneth Sonntag', px: '6000×4000', lum: .474, what: 'Mostar i dolina Neretve s brda' },
+      { id: 'photo-1629061998905-35649c5603d6', by: 'mana5280', px: '8014×5343', lum: .422, what: 'Najveća rezolucija od svih' },
+      { id: 'photo-1628011032307-29c736b2ce93', by: 'mana5280', px: '4032×3024', lum: .470, what: 'Iz zraka — Neretva i stari grad' },
+      { id: 'photo-1615634428097-c9de2f603798', by: 'Omer Nezih Gerek', px: '4903×3262', lum: .436, what: 'Uz rijeku, danje svjetlo' },
+      { id: 'photo-1535627565086-13f55c100c0d', by: 'Anton Sharov', px: '3312×2650', lum: .340, what: 'Odozgo, tamnija' }
     ]
   },
   {
     key: 'B', place: 'Kravice Waterfalls', word: 'Feel the merak.',
-    note: 'Ovo je slika na koju si se žalio. Stara je bila tamna šuma — vodopad se nije vidio.',
+    note: 'Ovdje je bio problem. Obje ranije slike bile su USPRAVNE — zato je vodopad ispadao iz kadra.',
     shots: [
-      { id: 'photo-1752159276871-30b5aa5e0241', by: 'Stanisław Lul', now: true, what: 'NOVA — vodopadi u tirkizno jezero, ljetno sunce' },
-      { id: 'photo-1733254145554-e49274aa95df', by: 'Francesco Torsello', what: 'Puna širina vodopada, ljeto, puno vode' },
-      { id: 'photo-1716968921644-dc2c264aa8e8', by: 'Christian Lue', what: 'Veliki vodopad, širok kadar' },
-      { id: 'photo-1716968921728-dcab243c9482', by: 'Christian Lue', what: 'Isti dan, drugi ugao' },
-      { id: 'photo-1680487927957-661c1bdd90cd', by: 'Sporisevic Photography', what: 'Vodopad iza smaragdne vode' },
-      { id: 'photo-1692563318127-49c18bbfc31d', by: 'Mujo Hasanovic', what: 'Pogled s ulaza, zelenilo uokvirava' },
-      { id: 'photo-1757759170092-bb9d6ff5bc4f', by: 'Stanisław Lul', old: true, what: 'STARA — ova je bila prije, tamna' }
+      { id: 'photo-1680487927957-661c1bdd90cd', by: 'Sporisevic Photography', px: '4905×2489', lum: .492, now: true, what: 'NOVA — najšira od svih (1.97:1), skoro se ne reže' },
+      { id: 'photo-1716968921728-dcab243c9482', by: 'Christian Lue', px: '6000×2515', lum: .373, what: 'Panorama 2.39:1, tamnija' },
+      { id: 'photo-1692563318127-49c18bbfc31d', by: 'Mujo Hasanovic', px: '3406×2718', lum: .490, what: 'Pogled s ulaza' },
+      { id: 'photo-1677560691918-762bf76472b4', by: 'Jo Barnes', px: '4032×3024', lum: .482, what: 'Ima ljudi koji se kupaju' },
+      { id: 'photo-1592494338349-60526052bbbf', by: 'Carolina Fuzinato', px: '3520×1980', lum: .413, what: 'Široka, zelenilo uz vodu' },
+      { id: 'photo-1757759170092-bb9d6ff5bc4f', by: 'Stanisław Lul', px: '3872×2592', lum: .442, old: true, what: 'Prva verzija — vodoravna, ali tamna' }
     ]
   },
   {
     key: 'C', place: 'Sarajevo', word: 'Discover Bosnia.',
     note: 'Treba da se odmah prepozna da je Sarajevo.',
     shots: [
-      { id: 'photo-1683764681443-c85ff83109b4', by: 'Hongbin', now: true, what: 'Baščaršija — jedina s izričitom oznakom Baščaršije' },
-      { id: 'photo-1771800776976-ffce850e8bed', by: 'nedimshoots', what: 'Sebilj u plavom satu, svjetla upaljena' },
-      { id: 'photo-1582570012409-02464571b269', by: 'Mi Yo', what: 'Grad odozgo, danje svjetlo' },
-      { id: 'photo-1597245283980-259fa29258e0', by: 'Azur Golic', what: 'Krovovi grada odozgo' },
-      { id: 'photo-1722597025874-04b833bc5cf0', by: 'Sarajevo slike', what: 'Kupola i krovovi iz zraka' },
-      { id: 'photo-1678322326249-120d92ad176e', by: 'Sporisevic Photography', what: 'Vijećnica' },
-      { id: 'photo-1715023748280-22ce1a24f8fd', by: 'Haris Copelj', what: 'Ulica u starom gradu, jedan prolaznik' },
-      { id: 'photo-1544673442-5721288cf573', by: 'Darcey Beau', what: 'Nišani na brdu iznad grada — vrlo prepoznatljivo, ali ozbiljan ton' }
+      { id: 'photo-1683764681443-c85ff83109b4', by: 'Hongbin', px: '6960×4640', lum: .539, now: true, what: 'Baščaršija — jedina s izričitom oznakom Baščaršije' },
+      { id: 'photo-1680220700316-41ec6aa2f805', by: 'Sporisevic Photography', px: '5184×3456', lum: .514, what: 'Pogled na grad' },
+      { id: 'photo-1678322326249-120d92ad176e', by: 'Sporisevic Photography', px: '4308×3456', lum: .514, what: 'Vijećnica' },
+      { id: 'photo-1763787002975-5aefe199191b', by: 'Sporisevic Photography', px: '5184×3456', lum: .423, what: 'Krovovi grada' },
+      { id: 'photo-1636041417222-1305988d38a0', by: 'Lothar Boris Piltz', px: '4928×3264', lum: .452, what: 'Golubovi na trgu, munara iza' },
+      { id: 'photo-1722597025874-04b833bc5cf0', by: 'Sarajevo slike', px: '4000×1868', lum: .396, what: 'Vrlo široka (2.14:1), kupola i krovovi' },
+      { id: 'photo-1570831709673-03320e9d734f', by: 'ADEV', px: '7296×5472', lum: .427, what: 'Ulica u starom gradu' }
     ]
   },
   {
     key: 'D', place: 'Blagaj', word: 'Feel the merak.',
     note: 'Tekija ispod stijene, na vrelu Bune.',
     shots: [
-      { id: 'photo-1652287350277-db5ba07dfd46', by: 'Mujo Hasanovic', now: true, what: 'Tekija i vrelo Bune zajedno, danje svjetlo' },
-      { id: 'photo-1772664507853-456c9d47f024', by: 'Fatih Beki', what: 'Rijeka u prvom planu, kuće pod stijenom' },
-      { id: 'photo-1772664513700-4fe6a4d1923d', by: 'Fatih Beki', what: 'Objekti uklopljeni u stijenu, drveće' },
-      { id: 'photo-1626729028670-42ff0f142607', by: 'Miguel Alcântara', what: 'Bijela kuća uz rijeku, odraz u vodi' },
-      { id: 'photo-1549809630-35a31b463445', by: 'İhsan Işık', what: 'Kuća, stijena dominira iznad' },
-      { id: 'photo-1772664587058-4bc625e12315', by: 'Fatih Beki', what: 'Sumrak — lijepo, ali tamnije' }
+      { id: 'photo-1652287350277-db5ba07dfd46', by: 'Mujo Hasanovic', px: '4000×3000', lum: .458, now: true, what: 'Tekija i vrelo Bune zajedno' },
+      { id: 'photo-1772664507853-456c9d47f024', by: 'Fatih Beki', px: '6240×4160', lum: .420, what: 'Rijeka u prvom planu, kuće pod stijenom' },
+      { id: 'photo-1772664452127-7795551e9cc3', by: 'Fatih Beki', px: '6240×4160', lum: .385, what: 'Cvijeće u prvom planu, most iza' },
+      { id: 'photo-1772664513700-4fe6a4d1923d', by: 'Fatih Beki', px: '6240×4160', lum: .379, what: 'Objekti uklopljeni u stijenu' },
+      { id: 'photo-1772664587058-4bc625e12315', by: 'Fatih Beki', px: '6240×4160', lum: .333, what: 'Sumrak — lijepo, ali tamnije' },
+      { id: 'photo-1626729028670-42ff0f142607', by: 'Miguel Alcântara', px: '5412×3608', lum: .295, what: 'Bijela kuća uz rijeku, najtamnija' }
     ]
   }
 ];
@@ -85,7 +84,7 @@ const card = (s, slot, n) => `
     ${s.now ? '<span class="flag">na stranici sada</span>' : ''}
     ${s.old ? '<span class="flag flag--old">bila prije</span>' : ''}
   </div>
-  <figcaption><b>${slot.key}${n}</b> ${s.what} <i>— ${s.by}</i></figcaption>
+  <figcaption><b>${slot.key}${n}</b> ${s.what} <i>— ${s.by} · ${s.px} · svjetlina ${s.lum}</i></figcaption>
 </figure>`;
 
 const html = `<!doctype html>
@@ -150,7 +149,7 @@ const html = `<!doctype html>
 </head><body>
 <header>
   <h1>Izbor slika za naslovnu — Merak Tours</h1>
-  <p>Svaka slika je prikazana <b>tačno kako će izgledati na stranici</b>: isti izrez, isto zatamnjenje, isti tekst preko nje. Prođi kroz sve i javi mi samo oznake — npr. <b>A2, B1, C3, D1</b>. Dugme gore prebacuje na čistu sliku bez teksta.</p>
+  <p>Svaka slika je prikazana <b>tačno kako će izgledati na stranici</b>: isti izrez, isto zatamnjenje, isti tekst preko nje. <b>Sve su vodoravne</b> — uspravne sam izbacio jer se u širokom kadru odreže glavni motiv, i to je bio uzrok problema s Kravicama. Prođi kroz sve i javi mi samo oznake — npr. <b>A2, B1, C3, D1</b>. Dugme gore prebacuje na čistu sliku bez teksta.</p>
 </header>
 <div class="bar">
   <button type="button" data-mode="hero" aria-pressed="true">Kako izgleda na stranici</button>

@@ -1,4 +1,4 @@
-import { site, tours, pillars, quotes, interests, faqs, media, included, notIncluded } from './data.mjs';
+import { site, tours, pillars, quotes, interests, faqs, media, included, notIncluded, heroRotation } from './data.mjs';
 import {
   page, img, heroImg, icons, esc, wa, waGeneral, includedSection, ctaSection, faqSection, photoUrl, photoCrop, archDivider
 } from './templates.mjs';
@@ -260,12 +260,7 @@ export function home() {
        of the country the journeys reach. Only the first frame is fetched up
        front — the others load once the page has settled. -->
   <div class="hero__media" data-heroslides>
-    ${[
-      ['heroMostar', 'Mostar'],
-      ['kraviceFalls', 'Kravice Waterfalls'],
-      ['sarajevoSquare', 'Sarajevo'],
-      ['blagajTekke', 'Blagaj']
-    ].map(([k, place], i) =>
+    ${heroRotation.map(([k, place], i) =>
       `<figure class="hero__slide${i ? '' : ' is-on'}" data-place="${esc(place)}">${heroImg(k, { first: !i })}</figure>`
     ).join('')}
   </div>
@@ -505,7 +500,7 @@ ${ctaSection()}
     keywords: 'private tours Mostar, Mostar private tours, Bosnia private tours, Herzegovina tours, Mostar to Kravice tour, Mostar Počitelj tour, Mostar Blagaj tour, Mostar Sarajevo tour',
     path: '/',
     html,
-    preloadImage: 'heroMostar',
+    preloadImage: heroRotation[0][0],
     jsonld: [org, website, itemList, faqLd]
   });
 }
@@ -739,7 +734,7 @@ ${ctaSection({ title: 'Ready when you are.', imgKey: t.gallery[0] })}
 export function createPage() {
   const html = `
 <section class="thero" style="min-height:62svh">
-  <div class="thero__media">${img('mountains', { sizes: '100vw', priority: true, max: 2400 })}</div>
+  <div class="thero__media">${img('neretvaCanyon', { sizes: '100vw', priority: true, max: 2400, q: 82 })}</div>
   <div class="wrap thero__in">
     <nav class="crumbs" aria-label="Breadcrumb"><a href="/">Merak Tours</a> <span aria-hidden="true">/</span> <span>Create your journey</span></nav>
     <p class="eyebrow" style="color:var(--buna-soft);margin-top:1.2rem">Custom journeys</p>
@@ -806,7 +801,7 @@ ${ctaSection({ title: 'Tell us what you have in mind.', imgKey: 'neretvaCanyon' 
     keywords: 'custom tour Bosnia, tailor made tour Mostar, private guide Bosnia and Herzegovina, custom day trip Mostar',
     path: '/create-your-journey/',
     html,
-    preloadImage: 'mountains',
+    preloadImage: 'neretvaCanyon',
     ogImage: '/assets/img/og-create.png',
     jsonld: [{
       '@context': 'https://schema.org',
