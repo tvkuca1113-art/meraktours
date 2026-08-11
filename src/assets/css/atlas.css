@@ -1,0 +1,103 @@
+/* =========================================================================
+   THE ATLAS — a printed map, animated
+   Paper, ink, water, one green line. Nothing glows.
+   ========================================================================= */
+.atlas { display: block; width: 100%; height: 100%; }
+/* the live layer sits exactly on top of the printed sheet */
+.atlas--live {
+  position: absolute; inset: 0; pointer-events: none;
+  contain: strict;
+}
+
+.atlas__paper { fill: #dde8ea; }
+.atlas__land  { fill: #ece5d7; stroke: #ece5d7; stroke-width: 1.2; }
+.atlas__home  { fill: #fdfaf5; }
+.atlas__sea   { fill: #dde8ea; }
+.atlas__border { fill: none; stroke: #c6bba6; stroke-width: 1.5; }
+
+.atlas__river { fill: none; stroke: #b3cdd5; stroke-width: 1.4; stroke-linecap: round; }
+.atlas__river.is-main { stroke: #8bb9c7; stroke-width: 2.4; }
+.atlas__lake { fill: #b3cdd5; }
+
+.atlas__sealabel { fill: #a4b8bc; font: italic 300 20px var(--display), serif; letter-spacing: 6px; }
+.atlas__country { fill: #b3a996; font: 400 12px var(--body), sans-serif; letter-spacing: 3.6px; text-transform: uppercase; }
+.atlas__river-label { fill: #93b3bd; font: italic 300 15px var(--display), serif; letter-spacing: 3px; }
+
+/* ---------- the route ---------------------------------------------------- */
+/* where the day is going, before it gets there */
+.atlas__ghost {
+  fill: none; stroke: #2f6a4f; stroke-width: 1.1; stroke-linecap: round;
+  stroke-dasharray: 1 5; opacity: 0; visibility: hidden;
+  transition: opacity .7s;
+}
+.atlas__ghost.is-on { visibility: visible; opacity: .3; }
+
+.atlas__route {
+  /* the width is divided back down by the zoom instead of using
+     non-scaling-stroke, which would compute the dash in screen units and
+     leave the drawn line lagging behind the traveller */
+  fill: none; stroke: #2f6a4f; stroke-width: calc(3.2px / var(--k, 1));
+  stroke-linecap: round; stroke-linejoin: round;
+  visibility: hidden;
+  stroke-dasharray: 1000; stroke-dashoffset: 1000;
+}
+.atlas__route.is-on { visibility: visible; }
+
+/* ---------- the towns ---------------------------------------------------- */
+.atlas__place { --on: 0; }
+.atlas__halo {
+  fill: #2f6a4f; opacity: 0;
+  transform-box: fill-box; transform-origin: center;
+  transform: scale(.3);
+  transition: opacity .8s var(--ease-out), transform .9s var(--ease-out);
+}
+.atlas__dot {
+  fill: #fbf8f2; stroke: #b4a992; stroke-width: 1.8;
+  transform-box: fill-box; transform-origin: center;
+  transition: stroke .6s, fill .6s, transform .6s var(--ease-out);
+}
+.atlas__name {
+  fill: #5b6a61; font: 500 16px var(--body), sans-serif; letter-spacing: .3px;
+  transition: fill .6s, font-weight .6s;
+}
+
+.atlas__place.is-on .atlas__dot { stroke: #12301f; stroke-width: 2.2; }
+.atlas__place.is-on .atlas__name { fill: #24332c; }
+.atlas__place.is-on .atlas__halo { opacity: .10; transform: scale(1); }
+
+.atlas__place.is-now .atlas__dot { fill: #2f6a4f; stroke: #12301f; transform: scale(1.25); }
+.atlas__place.is-now .atlas__name { fill: #12301f; }
+.atlas__place.is-now .atlas__halo { opacity: .16; transform: scale(1.18); animation: atlasPulse 2.6s var(--ease-out) 2; }
+
+@keyframes atlasPulse {
+  0%   { opacity: .3; transform: scale(.85); }
+  70%  { opacity: 0;  transform: scale(1.9); }
+  100% { opacity: .16; transform: scale(1.18); }
+}
+
+/* ---------- the traveller ------------------------------------------------ */
+.atlas__van { opacity: 0; transition: opacity .6s; }
+.atlas__van.is-on { opacity: 1; }
+.atlas__vanShadow { fill: #12301f; opacity: .14; }
+.atlas__vanDisc { fill: #12301f; }
+.atlas__vanMark { color: #fbf8f2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .atlas__halo, .atlas__dot, .atlas__name, .atlas__van { transition: none; }
+  .atlas__place.is-now .atlas__halo { animation: none; }
+}
+
+/* ---------- the smaller places and the furniture -------------------------- */
+.atlas__minor circle { fill: #b9ae9b; }
+.atlas__minor text {
+  fill: #8a8271; font: 400 11.5px var(--body), sans-serif; letter-spacing: .5px;
+}
+.atlas__grat { fill: none; stroke: #12301f; stroke-opacity: .055; stroke-width: 1; }
+
+.atlas__rose { color: #b0a692; }
+.atlas__roseNeedle { fill: currentColor; opacity: .55; }
+.atlas__roseN { fill: currentColor; font: 500 10px var(--body), sans-serif; letter-spacing: 1.6px; }
+
+.atlas__scaleBar { fill: none; stroke: #8b8375; stroke-width: 1.2; }
+.atlas__scaleLabel { fill: #8b8375; font: 400 10px var(--body), sans-serif; letter-spacing: 1.6px; }
+.atlas__scale { text-anchor: start; }

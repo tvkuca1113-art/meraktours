@@ -1,0 +1,33 @@
+{
+  "name": "merak-tours",
+  "version": "1.0.0",
+  "description": "Merak Tours — private and small group tours, Bosnia and Herzegovina",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "node build.mjs",
+    "start": "node tools/serve.mjs",
+    "preview": "node tools/serve.mjs",
+    "dev": "node build.mjs && node tools/serve.mjs",
+    "test": "node tools/test.mjs && node tools/links.mjs",
+    "audit": "node tools/audit.mjs",
+    "shots": "node tools/shots.mjs",
+    "look": "node tools/look.mjs",
+    "perf": "node tools/perf.mjs",
+    "motion": "node tools/motion.mjs"
+  },
+  "dependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "esbuild": "^0.24.0",
+    "subset-font": "^2.3.0"
+  },
+  "devDependencies": {
+    "axe-core": "^4.10.2",
+    "chrome-launcher": "^1.1.2",
+    "html-validate": "^8.24.2",
+    "lighthouse": "^12.2.1",
+    "playwright": "^1.49.1"
+  }
+}

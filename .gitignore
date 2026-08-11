@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-audit/
+deliver/
+shots/
+.cache/
+.vercel/
+.DS_Store
+Thumbs.db
+*.log
