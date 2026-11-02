@@ -8,3 +8,10 @@ shots/
 .DS_Store
 Thumbs.db
 *.log
+.review-media/
+src/assets/photos/kayakShore-*
+.openai/
+qa/
+
+# Temporary source pack from the interrupted delivery; normal builds use tracked derivatives.
+src/assets/approved-photos.tar.gz

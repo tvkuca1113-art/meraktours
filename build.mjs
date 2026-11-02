@@ -11,7 +11,16 @@ import * as esbuild from 'esbuild';
 import subsetFont from 'subset-font';
 import { Resvg } from '@resvg/resvg-js';
 import { site, tours, media, heroRotation } from './src/data.mjs';
-import { home, tourPage, createPage, creditsPage, notFound } from './src/pages.mjs';
+import { renderPage, notFound } from './src/pages.mjs';
+import { languages, routeSlugs, pathFor, legacyRedirects } from './src/routes.mjs';
+import { business, isReview, kayakDraft, translationApprovals } from './src/catalog.mjs';
+
+const kayakRequired=['operator','activityOperator','confirmationBy','paymentRecipient','location','meetingPoint','duration','capacity','inclusions','exclusions','participantRules','weatherPolicy','cancellationPolicy','season'];
+const approvedMedia=existsSync('docs/media-manifest.json')?JSON.parse(readFileSync('docs/media-manifest.json','utf8')):[];
+const releaseIncomplete=!business.releaseApproved||business.legalReview!=='approved'||!business.legalName||!business.address||kayakDraft.publicationStatus!=='published'||kayakRequired.some(k=>kayakDraft[k]==null)||!approvedMedia.some(m=>m.id==='kayakShore'&&m.approvedForProduction===true)||Object.values(translationApprovals).some(l=>!l.approved);
+if (!isReview && releaseIncomplete) {
+  throw new Error('PRODUCTION_RELEASE_BLOCKED: owner confirmation of kayak facts, media rights, business/legal details and translations is required. See docs/OWNER_INPUT_REQUIRED.md.');
+}
 
 /* ---------------- the photographs that run full width ---------------------
    A picture behind a headline is cropped hard: on a wide card it keeps a band
@@ -49,22 +58,26 @@ rmSync(OUT, { recursive: true, force: true });
 mkdirSync(OUT, { recursive: true });
 
 /* ---------------- pages -------------------------------------------------- */
-write('index.html', home());
-tours.forEach((t, i) => write(`tours/${t.slug}/index.html`, tourPage(t, i)));
-write('create-your-journey/index.html', createPage());
-write('credits/index.html', creditsPage());
+const pageIds = Object.keys(routeSlugs).filter(id=>id!=='kayak-tandem'||isReview);
+for (const lang of languages) for (const id of pageIds) {
+  write(pathFor(id,lang).slice(1)+'index.html', renderPage(id,lang));
+}
+for (const redirect of legacyRedirects) {
+  const fallback=`<!doctype html><html lang="${redirect.source==='/'?'bs':'en'}"><head><meta charset="utf-8"><meta name="robots" content="noindex, follow"><meta http-equiv="refresh" content="0;url=${redirect.destination}"><title>Merak Tours</title></head><body><a href="${redirect.destination}">Merak Tours →</a></body></html>`;
+  write(redirect.source.slice(1)+'index.html',fallback);
+}
 write('404.html', notFound());
+write('404/index.html',notFound());
 
 /* ---------------- css ---------------------------------------------------- */
-const cssSrc = readFileSync('src/assets/css/merak.css', 'utf8') + '\n' +
-               readFileSync('src/assets/css/atlas.css', 'utf8');
+const cssSrc = readFileSync('src/assets/css/merak.css', 'utf8');
 const css = await esbuild.transform(cssSrc, { loader: 'css', minify: true });
 write('assets/css/merak.css', css.code);
 
 /* ---------------- js ----------------------------------------------------- */
 const mainJs = await esbuild.build({
   entryPoints: ['src/assets/js/merak.js'],
-  bundle: false, minify: true, target: ['es2019'], write: false
+  bundle: true, minify: true, target: ['es2020'], write: false
 });
 write('assets/js/merak.js', mainJs.outputFiles[0].text);
 
@@ -100,7 +113,7 @@ for (const [name, url] of Object.entries(FONT_SRC)) {
 /* Only the characters this site can render — keeps the woff2 files small. */
 const CHARS =
   ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~' +
-  'ČčĆćŠšŽžĐđÁáÀàÂâÄäÉéÈèÊêËëÍíÎîÓóÔôÖöÚúÜüÝýÑñÅåØøÆæßÇç' +
+  'ČčĆćŠšŽžĐđÁáÀàÂâÄäÉéÈèÊêËëÍíÌìÎîÓóÒòÔôÖöÚúÙùÜüÝýÑñÅåØøÆæßÇç¿¡' +
   '·–—…‘’“”„«»•°×→←™®©€£§№';
 
 write('assets/fonts/fraunces.woff2', await subsetFont(fontBuf['Fraunces.ttf'], CHARS, {
@@ -237,10 +250,10 @@ write('assets/img/logo.png', png(iconSvg(0.82), 512));
 
 /* ---------------- manifest, robots, sitemap, headers --------------------- */
 write('site.webmanifest', JSON.stringify({
-  name: 'Merak Tours — Private Tours in Bosnia and Herzegovina',
+  name: 'Merak Tours — Privatne ture i kajaci',
   short_name: 'Merak Tours',
-  description: 'Private and small-group tours of Bosnia and Herzegovina, from Mostar.',
-  start_url: '/',
+  description: 'Privatni izleti iz Mostara i informacije o kajacima.',
+  start_url: '/bs/',
   display: 'standalone',
   background_color: '#f8f4ed',
   theme_color: '#12301f',
@@ -253,12 +266,8 @@ write('site.webmanifest', JSON.stringify({
 
 write('robots.txt', `User-agent: *\nAllow: /\n\nSitemap: ${site.origin}/sitemap.xml\n`);
 
-const urls = [
-  { loc: '/', pri: '1.0', freq: 'weekly' },
-  ...tours.map(t => ({ loc: `/tours/${t.slug}/`, pri: '0.9', freq: 'monthly' })),
-  { loc: '/create-your-journey/', pri: '0.8', freq: 'monthly' },
-  { loc: '/credits/', pri: '0.2', freq: 'yearly' }
-];
+const indexableIds=pageIds.filter(id=>!['kayaks','kayak-tandem','privacy','terms'].includes(id));
+const urls=languages.flatMap(lang=>indexableIds.map(id=>({id,lang,loc:pathFor(id,lang),pri:id==='home'?'1.0':'0.8',freq:'monthly'})));
 write('sitemap.xml',
 `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
@@ -266,10 +275,11 @@ ${urls.map(u => `  <url>
     <loc>${site.origin}${u.loc}</loc>
     <changefreq>${u.freq}</changefreq>
     <priority>${u.pri}</priority>
-    <xhtml:link rel="alternate" hreflang="en" href="${site.origin}${u.loc}"/>
-    <xhtml:link rel="alternate" hreflang="x-default" href="${site.origin}${u.loc}"/>
+    ${languages.map(l=>`<xhtml:link rel="alternate" hreflang="${l}" href="${site.origin}${pathFor(u.id,l)}"/>`).join('\n    ')}
+    <xhtml:link rel="alternate" hreflang="x-default" href="${site.origin}${pathFor(u.id,'bs')}"/>
   </url>`).join('\n')}
 </urlset>
 `);
 
-console.log(`built ${urls.length + 1} pages · origin ${site.origin}`);
+console.log(`built ${languages.length*pageIds.length} localized pages · origin ${site.origin}`);
+write('route-manifest.json',JSON.stringify({preview:isReview,pages:languages.flatMap(lang=>pageIds.map(id=>({id,lang,path:pathFor(id,lang),indexable:!isReview&&indexableIds.includes(id)}))),redirects:legacyRedirects},null,2));

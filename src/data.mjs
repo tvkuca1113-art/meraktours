@@ -21,15 +21,16 @@ export const site = {
   origin: (
     process.env.SITE_ORIGIN ||
     (process.env.VERCEL_PROJECT_PRODUCTION_URL && 'https://' + process.env.VERCEL_PROJECT_PRODUCTION_URL) ||
-    'https://meraktours.ba'
+    'https://meraktours.vercel.app'
   ).replace(/\/$/, ''),
-  lang: 'en',
-  // Architecture is prepared for en / de / bs. Only `en` is published today,
-  // so only `en` is advertised in hreflang (never point hreflang at a 404).
+  lang: 'bs',
+  // Each published language has a complete static route and reciprocal hreflang.
   locales: [
-    { code: 'en', label: 'English', short: 'EN', published: true, prefix: '' },
-    { code: 'de', label: 'Deutsch', short: 'DE', published: false, prefix: '/de' },
-    { code: 'bs', label: 'Bosanski', short: 'BS', published: false, prefix: '/bs' }
+    { code: 'bs', label: 'Bosanski', short: 'BS', published: true, prefix: '/bs' },
+    { code: 'en', label: 'English', short: 'EN', published: true, prefix: '/en' },
+    { code: 'de', label: 'Deutsch', short: 'DE', published: true, prefix: '/de' },
+    { code: 'it', label: 'Italiano', short: 'IT', published: true, prefix: '/it' },
+    { code: 'es', label: 'Español', short: 'ES', published: true, prefix: '/es' }
   ],
   whatsapp: {
     display: '+387 63 822 083',

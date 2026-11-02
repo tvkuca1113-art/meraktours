@@ -8,7 +8,9 @@
    ========================================================================= */
 import { serve } from './lib.mjs';
 
-const port = +(process.argv[2] || process.env.PORT || 3000);
+const args=process.argv.slice(2);
+const portIndex=args.indexOf('--port');
+const port = Number(portIndex>=0?args[portIndex+1]:args.find(v=>/^\d+$/.test(v))||process.env.PORT||3000);
 await serve(port);
 
 console.log(`

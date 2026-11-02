@@ -1,22 +1,26 @@
 {
   "name": "merak-tours",
   "version": "1.0.0",
-  "description": "Merak Tours — private and small group tours, Bosnia and Herzegovina",
+  "description": "Merak Tours \u2014 multilingual private tours from Mostar and a controlled kayaking offer",
   "private": true,
   "type": "module",
   "license": "UNLICENSED",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "node build.mjs",
     "start": "node tools/serve.mjs",
     "preview": "node tools/serve.mjs",
     "dev": "node build.mjs && node tools/serve.mjs",
-    "test": "node tools/test.mjs && node tools/links.mjs",
-    "audit": "node tools/audit.mjs",
+    "test": "node --test tests/*.test.mjs && node tools/validate.mjs",
+    "audit": "node tools/validate.mjs",
     "shots": "node tools/shots.mjs",
     "look": "node tools/look.mjs",
     "perf": "node tools/perf.mjs",
-    "motion": "node tools/motion.mjs"
+    "motion": "node tools/motion.mjs",
+    "lint": "node tools/check-syntax.mjs",
+    "qa:preview": "node tools/qa-preview.mjs"
   },
   "dependencies": {
     "@resvg/resvg-js": "^2.6.2",

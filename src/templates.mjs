@@ -1,396 +1,62 @@
-import { site, media, tours, included, notIncluded, faqs } from './data.mjs';
-
-/* ---------- helpers ------------------------------------------------------ */
-export const esc = (s = '') => String(s)
-  .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-
-const WIDTHS = [480, 768, 1080, 1440, 1920, 2400];
-const CDN = 'https://images.unsplash.com/';
-
-/* The client's own photographs are served from this origin; the stock ones
-   come off the Unsplash CDN, which negotiates AVIF/WebP for us. */
-const LOCAL_W = [480, 768, 1080, 1440];
-const nearest = (w) => LOCAL_W.find(x => x >= w) || LOCAL_W[LOCAL_W.length - 1];
-
-/* Two optional per-photograph controls, both handled by the CDN so they cost
-   nothing at runtime:
-     fp:   [x, y] or [x, y, zoom] — where the subject actually is, 0..1.
-           Without it the CDN crops from the centre, which decapitates a
-           waterfall sitting in the lower third of the frame.
-     tone: imgix parameters — `con` contrast, `sat` saturation, `bri`
-           brightness, `usm` unsharp mask. A big photograph behind white type
-           needs a little more contrast and a little sharpening than the same
-           photograph does in a gallery. */
-const knobs = (m) => (m.fp
-  ? `&crop=focalpoint&fp-x=${m.fp[0]}&fp-y=${m.fp[1]}${m.fp[2] ? `&fp-z=${m.fp[2]}` : ''}`
-  : '') + (m.tone ? `&${m.tone}` : '');
-
-export const photoUrl = (key, w = 1440, q = 74) =>
-  media[key].local
-    ? `/assets/photos/${media[key].local}-${nearest(w)}.jpg`
-    : `${CDN}${media[key].id}?auto=format&fit=crop&w=${w}&q=${q}${knobs(media[key])}`;
-
-/* fixed-ratio crop, for the small standing photographs */
-export const photoCrop = (key, w, h, q = 70) =>
-  media[key].local
-    ? `/assets/photos/${media[key].local}-${nearest(w)}.jpg`
-    : `${CDN}${media[key].id}?auto=format&fit=crop&crop=entropy&w=${w}&h=${h}&q=${q}`;
-
-/**
- * Responsive <img>. Unsplash's CDN negotiates AVIF/WebP via `auto=format`,
- * so we get modern formats without hosting binaries ourselves.
- */
-export function img(key, {
-  sizes = '100vw', max = 2400, cls = '', loading = 'lazy', priority = false, ratio = '', style = '', q = 74
-} = {}) {
-  const m = media[key];
-  if (!m) throw new Error('Unknown media key: ' + key);
-  const widths = (m.local ? LOCAL_W : WIDTHS).filter(w => w <= max);
-  const srcset = widths.map(w => `${photoUrl(key, w, q)} ${w}w`).join(', ');
-  return `<img src="${photoUrl(key, Math.min(1080, max), q)}" srcset="${srcset}" sizes="${sizes}"
-    alt="${esc(m.alt)}" ${ratio ? `width="${ratio[0]}" height="${ratio[1]}"` : ''}
-    loading="${priority ? 'eager' : loading}" decoding="${priority ? 'sync' : 'async'}"
-    ${priority ? 'fetchpriority="high"' : ''} ${cls ? `class="${cls}"` : ''} ${style ? `style="${style}"` : ''}>`;
+import { existsSync } from 'node:fs';
+import { site } from './data.mjs';
+import { ui } from './i18n.mjs';
+import { languages, pathFor } from './routes.mjs';
+import { business, photoAlts, products, productTitle, isReview } from './catalog.mjs';
+import { icons, logoMark } from './icons.mjs';
+export { icons, logoMark };
+export const esc = (s='')=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+export const json = o=>JSON.stringify(o).replace(/</g,'\\u003c');
+export const wa = text=>`https://wa.me/${business.phone.digits}?text=${encodeURIComponent(text)}`;
+export const hasPhoto = key=>existsSync(`src/assets/photos/${key}-768.webp`);
+export const photoUrl = (key,w=1440)=>`/assets/photos/${key}-${w}.jpg`;
+export function img(key,lang,{priority=false,cls='',sizes='100vw',focus='50% 50%'}={}) {
+ if(key==='kayakShore'&&!existsSync('src/assets/photos/kayakShore-768.webp')) return `<div class="media-slot" role="img" aria-label="${esc(ui[lang].kayaks)}">${esc(ui[lang].kayaks)}</div>`;
+ if(!photoAlts[key]?.[lang]) throw new Error(`Missing alt: ${key}/${lang}`);
+ const source = key==='kayakShore'?[3,4]:key==='fortica'?[16,9]:[3,2];
+ return `<picture${cls?` class="${cls}"`:''}><source type="image/webp" srcset="${[480,768,1080,1440].map(w=>`/assets/photos/${key}-${w}.webp ${w}w`).join(',')}" sizes="${esc(sizes)}"><img src="${photoUrl(key,1080)}" srcset="${[480,768,1080,1440].map(w=>`${photoUrl(key,w)} ${w}w`).join(',')}" sizes="${esc(sizes)}" width="${source[0]*400}" height="${source[1]*400}" alt="${esc(photoAlts[key][lang])}" loading="${priority?'eager':'lazy'}" decoding="async"${priority?' fetchpriority="high"':''} style="object-position:${focus}"></picture>`;
 }
-
-/* The hero rotates through four photographs. Only the first is fetched up
-   front; the rest carry their srcset on data- attributes and are promoted to
-   real ones once the page has settled, so three large images don't compete
-   with the one the visitor is actually looking at. */
-export function heroImg(key, { first = false, q = 82 } = {}) {
-  const m = media[key];
-  if (!m) throw new Error('Unknown media key: ' + key);
-  const widths = (m.local ? LOCAL_W : WIDTHS);
-  const srcset = widths.map(w => `${photoUrl(key, w, q)} ${w}w`).join(', ');
-  if (first) return img(key, { sizes: '100vw', priority: true, max: 2400, q });
-  return `<img alt="" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-    data-src="${photoUrl(key, 1440, q)}" data-srcset="${srcset}" sizes="100vw"
-    width="1600" height="1000" decoding="async">`;
+export const btn=(href,label,{secondary=false,small=false,extra=''}={})=>`<a class="btn ${secondary?'btn-secondary':''} ${small?'btn-small':''}" href="${esc(href)}" ${extra}><span>${esc(label)}</span>${icons.arrow}</a>`;
+export function brand(lang){return `<a class="brand" href="${pathFor('home',lang)}" aria-label="Merak Tours · ${esc(ui[lang].home)}">${logoMark('brand-mark')}<span><span class="brand-name">Merak Tours</span><span class="brand-sub">Bosnia &amp; Herzegovina</span></span></a>`;}
+const navIds=['kayaks','tours','custom','about','contact'];
+export function header(id,lang){const t=ui[lang];return `
+<a class="skip" href="#main">${t.skip}</a>
+${isReview?`<div class="review-banner">${esc(t.review)}</div>`:''}
+<header class="header" id="header"><div class="container header-inner">
+ ${brand(lang)}
+ <nav class="desktop-nav" aria-label="${esc(t.menu)}">${navIds.map(n=>`<a href="${pathFor(n,lang)}"${id===n?' aria-current="page"':''}>${t[n]}</a>`).join('')}</nav>
+ <div class="header-actions"><details class="language-picker"><summary aria-label="${esc(t.language)}">${lang.toUpperCase()} <span aria-hidden="true">⌄</span></summary><div class="language-options">${site.locales.map(l=>`<a href="${pathFor(id, l.code)}" lang="${l.code}" hreflang="${l.code}" data-language${l.code===lang?' aria-current="true"':''}>${l.label}</a>`).join('')}</div></details>
+ ${btn(pathFor('contact',lang),t.enquire,{small:true,extra:'data-cta="header"'})}
+ <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="mobile-menu"><span class="menu-icon" aria-hidden="true"></span><span class="sr-only">${t.menu}</span></button></div>
+</div><nav id="mobile-menu" class="mobile-menu container" aria-label="${esc(t.mobileMenu)}" hidden>${navIds.map(n=>`<a href="${pathFor(n,lang)}"${id===n?' aria-current="page"':''}>${t[n]} ${icons.arrow}</a>`).join('')}<div class="mobile-languages">${site.locales.map(l=>`<a data-language href="${pathFor(id,l.code)}" lang="${l.code}">${l.label}</a>`).join('')}</div></nav></header>`;}
+export function footer(lang){const t=ui[lang];return `<footer class="footer"><div class="container"><div class="footer-top"><div>${brand(lang)}<p>${t.footer}</p></div><div><h2>${t.tours}</h2>${products.map(p=>`<a href="${pathFor(p.id,lang)}">${esc(p.localizedContent[lang].title)}</a>`).join('')}</div><div><h2>${t.contact}</h2><a href="tel:${business.phone.e164}">${business.phone.display}</a><a href="${business.instagram.url}" target="_blank" rel="noopener noreferrer">Instagram ${esc(business.instagram.handle)}</a><span>${t.origin}</span></div></div><div class="footer-bottom"><span>© ${new Date().getUTCFullYear()} Merak Tours</span><div>${['privacy','terms','credits'].map(id=>`<a href="${pathFor(id,lang)}">${t[id==='credits'?'photography':id]}</a>`).join('')}</div></div></div></footer>`;}
+export function enquiryForm(lang,{id='general',locked=false,place='page'}={}){
+ const t=ui[lang];const tour=products.find(p=>p.id===id); const isKayak=id==='kayaks'||id==='kayak-tandem';
+ const options=[...products.map(p=>({id:p.id,label:p.localizedContent[lang].title})),{id:'kayaks',label:t.kayakQuestion},{id:'custom',label:t.custom},{id:'general',label:t.general}];
+ return `<section class="enquiry-card" id="upit" aria-labelledby="enquiry-title"><p class="eyebrow">${t.enquire}</p><h2 id="enquiry-title">${t.formTitle}</h2>${isKayak?`<p class="notice">${t.kayakNotice}</p>`:''}
+ <form id="enquiry-form" data-initial="${esc(isKayak?'kayaks':id)}" data-placement="${place}" novalidate>
+ <div data-form-step="1"><div class="field"><label for="offer">${t.offer}</label>${locked?`<p class="selected-offer">${esc(isKayak?t.kayaks:productTitle(id,lang))}</p><input type="hidden" name="offer" id="offer" value="${esc(isKayak?'kayaks':id)}">`:`<select name="offer" id="offer">${options.map(o=>`<option value="${o.id}"${o.id===id?' selected':''}>${esc(o.label)}</option>`).join('')}</select>`}</div>
+ <div class="field"><label for="date">${t.date}</label><input id="date" name="date" type="date" aria-describedby="date-error"><p class="field-error" id="date-error" hidden></p></div>
+ <label class="check"><input type="checkbox" name="flexible" id="flexible" checked><span>${t.flexible}</span></label>
+ <div class="field"><label for="guests">${t.guests}</label><input type="number" inputmode="numeric" id="guests" name="guests" min="1"${tour?' max="6"':''} step="1" value="2" required aria-describedby="guests-error"><p class="field-error" id="guests-error" hidden></p></div>
+ <label class="check" data-transfer-choice><input type="checkbox" name="transfer"><span>${t.transfer}</span></label>
+ <label class="check" data-kayak-choice><input type="checkbox" name="kayak"><span>${t.kayakInterest}</span></label>
+ ${id==='custom'?`<div class="field"><label for="interest">${t.preferences}</label><select name="interest" id="interest"><option value="nature">${t.nature}</option><option value="culture">${t.culture}</option><option value="views">${t.views}</option></select></div>`:''}
+ <button class="btn full" type="submit">${t.next}${icons.arrow}</button></div>
+ <div data-form-step="2" hidden><h3>${t.summary}</h3><label class="sr-only" for="message">${t.summary}</label><textarea id="message" readonly rows="10"></textarea><p class="form-note">${t.recipient}</p><a class="btn full" id="whatsapp-link" href="${wa(t.greeting)}" target="_blank" rel="noopener noreferrer">${icons.wa}${t.whatsapp}</a><p class="form-note">${t.waNote}</p><div class="form-buttons"><button type="button" class="text-button" data-copy>${t.copy}</button><button type="button" class="text-button" data-back>${t.back}</button></div><p role="status" class="form-note" id="form-status"></p><p class="form-note">${t.noApp} <a href="tel:${business.phone.e164}">${business.phone.display}</a></p></div>
+ <noscript><p>${t.waNote}</p>${btn(wa(t.greeting+' '+(isKayak?t.kayakQuestion:productTitle(id,lang))),t.whatsapp,{extra:'target="_blank" rel="noopener noreferrer"'})}<p><a href="tel:${business.phone.e164}">${business.phone.display}</a></p></noscript>
+ <p class="form-note"><a href="${pathFor('terms',lang)}">${t.terms}</a> · <a href="${pathFor('privacy',lang)}">${t.privacy}</a></p>
+ <details class="save-options"><summary>${t.yourPlan}</summary><button type="button" class="text-button" data-save>${t.save}</button><button type="button" class="text-button" data-clear>${t.clearPlan}</button><p role="status" data-save-status></p></details>
+ </form></section>`;
 }
-
-/* WhatsApp deep link with a pre-filled message */
-export const wa = (text) =>
-  `https://wa.me/${site.whatsapp.digits}?text=${encodeURIComponent(text)}`;
-
-export const waGeneral = wa(
-  `Hello Merak Tours! I found you on your website and I'd like to ask about your private tours in Bosnia and Herzegovina.`
-);
-
-/* ---------- icons -------------------------------------------------------- */
-export const icons = {
-  wa: `<svg class="ico" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17.47 14.38c-.3-.15-1.75-.86-2.02-.96-.27-.1-.47-.15-.67.15-.2.3-.77.96-.94 1.16-.17.2-.35.22-.64.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.64-2.05-.17-.3-.02-.46.13-.61.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.61-.92-2.2-.24-.58-.49-.5-.67-.51h-.57c-.2 0-.52.07-.79.37-.27.3-1.04 1.01-1.04 2.47s1.06 2.86 1.21 3.06c.15.2 2.1 3.2 5.07 4.49.71.3 1.26.49 1.69.63.71.22 1.36.19 1.87.12.57-.09 1.75-.71 2-1.4.25-.69.25-1.28.17-1.4-.07-.13-.27-.2-.57-.35M12.05 21.8h-.03a9.8 9.8 0 0 1-4.99-1.37l-.36-.21-3.71.97.99-3.62-.23-.37a9.78 9.78 0 0 1-1.5-5.22c0-5.4 4.4-9.8 9.83-9.8 2.62 0 5.09 1.03 6.94 2.88a9.75 9.75 0 0 1 2.87 6.94c0 5.4-4.4 9.8-9.81 9.8M20.52 3.45A11.6 11.6 0 0 0 12.05 0C5.6 0 .36 5.24.36 11.68c0 2.06.54 4.07 1.56 5.84L.26 24l6.63-1.74a11.66 11.66 0 0 0 5.16 1.24h.01c6.44 0 11.68-5.24 11.69-11.68 0-3.12-1.22-6.06-3.43-8.27"/></svg>`,
-  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 12h15m0 0-5.5-5.5M19 12l-5.5 5.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  check: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m4 12.5 5 5L20 6.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
-  minus: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M5 12h14" stroke-linecap="round"/></svg>`,
-  van: `<svg viewBox="0 0 32 20" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true"><path d="M2 14V7.5C2 6 3 5 4.5 5h11l5 4.5H27c1.7 0 3 1.3 3 3V14" stroke-linejoin="round"/><path d="M2 14h3m6 0h10m6 0h3"/><circle cx="8" cy="15" r="2.6"/><circle cx="24" cy="15" r="2.6"/></svg>`,
-  /* the van seen from above, for the vertical rail on a phone */
-  vanTop: `<svg viewBox="0 0 20 30" fill="none" aria-hidden="true"><rect x="3.2" y="2.4" width="13.6" height="25.2" rx="4.2" fill="currentColor"/><path d="M5.6 9.2h8.8M5.6 20.2h8.8" stroke="rgba(10,28,20,.55)" stroke-width="1.3" stroke-linecap="round"/><rect x="5.4" y="4.6" width="9.2" height="3.4" rx="1.5" fill="rgba(10,28,20,.5)"/></svg>`,
-  close: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" stroke-linecap="round"/></svg>`,
-  ig: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.42.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23-.22.56-.48.96-.9 1.38-.42.42-.82.68-1.38.9-.42.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.8 3.8 0 0 1-1.38-.9 3.8 3.8 0 0 1-.9-1.38c-.16-.42-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.42-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63c-.79.3-1.46.72-2.13 1.38A5.9 5.9 0 0 0 .63 4.14c-.3.76-.5 1.64-.56 2.91C.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91.3.79.72 1.46 1.38 2.13a5.9 5.9 0 0 0 2.13 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a5.9 5.9 0 0 0 2.13-1.38 5.9 5.9 0 0 0 1.38-2.13c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.13A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0m0 5.84a6.16 6.16 0 1 0 0 12.32 6.16 6.16 0 0 0 0-12.32M12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8m7.85-10.4a1.44 1.44 0 1 1-2.88 0 1.44 1.44 0 0 1 2.88 0"/></svg>`
-};
-
-/* ---------- brand mark --------------------------------------------------- */
-/* A refined mark drawn from the silhouette of Stari Most: the rising deck,
-   the arch beneath it and the Neretva below. Vector, so it stays crisp. */
-export const logoMark = (cls = 'brand__mark') => `
-<svg class="${cls}" viewBox="0 0 48 48" fill="none" aria-hidden="true">
-  <circle cx="24" cy="24" r="22.4" stroke="currentColor" stroke-opacity=".28" stroke-width="1.2"/>
-  <path d="M7.5 27.6C7.5 20.9 14.9 15.6 24 15.6s16.5 5.3 16.5 12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M7.5 27.6h4.2m24.6 0h4.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M11.7 27.6v4.2m24.6-4.2v4.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
-  <path d="M9 35.4c2.6 0 2.6 1.7 5.2 1.7s2.6-1.7 5.2-1.7 2.6 1.7 5.2 1.7 2.6-1.7 5.2-1.7 2.6 1.7 5.2 1.7 2.6-1.7 5.2-1.7"
-        stroke="currentColor" stroke-opacity=".5" stroke-width="1.5" stroke-linecap="round"/>
-</svg>`;
-
-export const brand = (extraClass = '') => `
-<a class="brand ${extraClass}" href="/">
-  ${logoMark()}
-  <span class="brand__txt">
-    <span class="brand__name">Merak Tours</span>
-    <span class="brand__sub">Bosnia &amp; Herzegovina</span>
-  </span>
-</a>`;
-
-/* ---------- navigation --------------------------------------------------- */
-const NAV = [
-  { href: '/#journeys', label: 'Journeys' },
-  { href: '/#places', label: 'The places' },
-  { href: '/#why', label: 'Why Merak' },
-  { href: '/create-your-journey/', label: 'Create your journey' },
-  { href: '/#faq', label: 'FAQ' }
-];
-
-export function header(current = '') {
-  return `
-<header class="hdr" id="hdr">
-  <div class="wrap hdr__in">
-    ${brand()}
-    <nav class="nav" aria-label="Primary">
-      ${NAV.map(n => `<a href="${n.href}"${current === n.href ? ' aria-current="page"' : ''}>${n.label}</a>`).join('')}
-    </nav>
-    <div class="hdr__act">
-      <a class="btn btn--sm" href="${waGeneral}" target="_blank" rel="noopener" data-wa>${icons.wa}<span>Book on WhatsApp</span></a>
-      <button class="burger" type="button" aria-expanded="false" aria-controls="drawer" aria-label="Open menu" id="burger">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </div>
-  <div class="progress" id="progress" aria-hidden="true"></div>
-</header>
-
-<div class="drawer" id="drawer" hidden>
-  <nav class="drawer__nav" aria-label="Mobile">
-    ${NAV.map((n, i) => `<a href="${n.href}" style="transition-delay:${0.08 + i * 0.06}s"><i>0${i + 1}</i>${n.label}</a>`).join('')}
-  </nav>
-  <div class="drawer__foot">
-    <a class="btn btn--wa" href="${waGeneral}" target="_blank" rel="noopener">${icons.wa} WhatsApp ${esc(site.whatsapp.display)}</a>
-    <p class="form-note" style="color:rgba(255,255,255,.55)">Mostar · Bosnia and Herzegovina</p>
-  </div>
-</div>`;
-}
-
-/* ---------- footer ------------------------------------------------------- */
-export function footer() {
-  const year = 2026;
-  return `
-<footer class="ftr">
-  <div class="wrap">
-    <div class="ftr__grid">
-      <div class="ftr__brand">
-        ${brand()}
-        <p style="max-width:34ch;margin-top:1rem">Private and small-group journeys through Bosnia and Herzegovina, from Mostar. Culture, nature and hidden gems — at your own pace.</p>
-      </div>
-      <div>
-        <h2>Journeys</h2>
-        <ul>
-          ${tours.map(t => `<li><a href="/tours/${t.slug}/">${esc(t.title)}</a></li>`).join('')}
-          <li><a href="/create-your-journey/">Create your own journey</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2>Explore</h2>
-        <ul>
-          <li><a href="/#merak">The meaning of merak</a></li>
-          <li><a href="/#places">The places</a></li>
-          <li><a href="/#why">Why travel with us</a></li>
-          <li><a href="/#included">What's included</a></li>
-          <li><a href="/#faq">Questions</a></li>
-        </ul>
-      </div>
-      <div>
-        <h2>Get in touch</h2>
-        <ul>
-          <li><a href="${waGeneral}" target="_blank" rel="noopener">WhatsApp ${esc(site.whatsapp.display)}</a></li>
-          <li><a href="${site.instagram.url}" target="_blank" rel="noopener">Instagram ${esc(site.instagram.handle)}</a></li>
-          <li>Mostar, Bosnia and Herzegovina</li>
-        </ul>
-      </div>
-    </div>
-    <div class="ftr__bottom">
-      <p>© ${year} Merak Tours. Private &amp; small group tours, Bosnia and Herzegovina.</p>
-      <p><a href="/credits/">Photography credits</a></p>
-    </div>
-  </div>
-  ${waFloat()}
-</footer>`;
-}
-
-/* ---------- floating WhatsApp + booking sheet ---------------------------- */
-export function waFloat() {
-  return `<a class="wa-float" id="waFloat" href="${waGeneral}" target="_blank" rel="noopener" aria-label="Message Merak Tours on WhatsApp">${icons.wa}<span>WhatsApp</span></a>`;
-}
-
-export function bookingSheet() {
-  return `
-<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle" hidden>
-  <div class="sheet__panel">
-    <div class="sheet__grab"></div>
-    <div class="sheet__head">
-      <div>
-        <p class="eyebrow">Check availability</p>
-        <h2 id="sheetTitle">Book this journey</h2>
-      </div>
-      <button class="sheet__close" type="button" id="sheetClose" aria-label="Close">${icons.close}</button>
-    </div>
-    <form id="bookForm" novalidate>
-      <input type="hidden" name="tour" id="bookTour" value="">
-      <div class="field">
-        <label for="bookTourName">Journey</label>
-        <select id="bookTourName" name="tourName">
-          ${tours.map(t => `<option value="${esc(t.title)}">${t.num} — ${esc(t.title)}</option>`).join('')}
-          <option value="A custom journey">Custom journey</option>
-        </select>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label for="bookDate">Preferred date</label>
-          <input type="date" id="bookDate" name="date">
-        </div>
-        <div class="field">
-          <label for="bookGuests">Travellers</label>
-          <select id="bookGuests" name="guests">
-            ${[1,2,3,4,5,6].map(n => `<option value="${n}"${n === 2 ? ' selected' : ''}>${n} ${n === 1 ? 'traveller' : 'travellers'}</option>`).join('')}
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label for="bookPickup">Pickup location</label>
-        <input type="text" id="bookPickup" name="pickup" placeholder="Hotel or address in Mostar" autocomplete="off">
-      </div>
-      <div class="field">
-        <label for="bookNote">Anything you'd like to add?</label>
-        <textarea id="bookNote" name="note" placeholder="Preferences, questions, things you'd like to see…"></textarea>
-      </div>
-      <div>
-        <p class="form-note" style="margin-bottom:.5rem">This opens WhatsApp with your message ready to send:</p>
-        <section class="sheet__preview" id="bookPreview" tabindex="0" aria-live="polite" aria-label="Your booking message"></section>
-      </div>
-      <button class="btn btn--wa btn--block" type="submit">${icons.wa} Send on WhatsApp</button>
-      <p class="form-note">Private tours for up to 6 people · Pickup and drop-off in Mostar · Every tour can be customised</p>
-    </form>
-  </div>
-</div>`;
-}
-
-/* ---------- page shell --------------------------------------------------- */
-export function page({
-  title, description, path, bodyClass = '', jsonld = [], html, ogImage = '/assets/img/og-default.png',
-  keywords = '', preloadImage = ''
-}) {
-  const url = site.origin + path;
-  const ld = jsonld.filter(Boolean).map(o =>
-    `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, '\\u003c')}</script>`).join('\n');
-
-  return `<!DOCTYPE html>
-<html lang="en" prefix="og: https://ogp.me/ns#">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>${esc(title)}</title>
-<meta name="description" content="${esc(description)}">
-${keywords ? `<meta name="keywords" content="${esc(keywords)}">` : ''}
-<link rel="canonical" href="${url}">
-<link rel="alternate" href="${url}" hreflang="en">
-<link rel="alternate" href="${url}" hreflang="x-default">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="theme-color" content="#12301f">
-<meta name="format-detection" content="telephone=no">
-
-<meta property="og:type" content="website">
-<meta property="og:site_name" content="Merak Tours">
-<meta property="og:locale" content="en_US">
-<meta property="og:title" content="${esc(title)}">
-<meta property="og:description" content="${esc(description)}">
-<meta property="og:url" content="${url}">
-<meta property="og:image" content="${site.origin}${ogImage}">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Merak Tours — private tours in Bosnia and Herzegovina">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="${esc(title)}">
-<meta name="twitter:description" content="${esc(description)}">
-<meta name="twitter:image" content="${site.origin}${ogImage}">
-
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="/assets/img/apple-touch-icon.png">
-<link rel="manifest" href="/site.webmanifest">
-
-<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
-<link rel="dns-prefetch" href="https://images.unsplash.com">
-<link rel="preload" href="/assets/fonts/fraunces.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="/assets/fonts/inter.woff2" as="font" type="font/woff2" crossorigin>
-${preloadImage ? `<link rel="preload" as="image" href="${photoUrl(preloadImage, 1440)}" imagesrcset="${WIDTHS.map(w => `${photoUrl(preloadImage, w)} ${w}w`).join(', ')}" imagesizes="100vw" fetchpriority="high">` : ''}
-<link rel="stylesheet" href="/assets/css/merak.css">
-<noscript><style>.rv,.rv-mask,.hero h1 .l>span,.hero__sub,.hero__cta,.hero__eyebrow,.hero__meta{opacity:1!important;transform:none!important;clip-path:none!important}.routemap .rline{stroke-dashoffset:0!important}.routemap .rdots{opacity:1!important}.wa-float{transform:none}</style></noscript>
-${ld}
-</head>
-<body class="${bodyClass}">
-<a class="skip" href="#main">Skip to content</a>
-${header()}
-<main id="main">
-${html}
-</main>
-${footer()}
-${bookingSheet()}
-<script src="/assets/js/merak.js" defer></script>
-</body>
-</html>`;
-}
-
-/* An arch cut between sections — the Stari Most silhouette used as structure. */
-export const archDivider = (variant = '') =>
-  `<svg class="archdiv ${variant}" viewBox="0 0 1440 74" preserveAspectRatio="none" aria-hidden="true">
-    <path d="M0 0h1440v30c-232 0-330 44-720 44S232 30 0 30z"/>
-  </svg>`;
-
-/* ---------- shared sections ---------------------------------------------- */
-export function includedSection() {
-  return `
-<section class="section" id="included">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <p class="eyebrow">Every journey</p>
-      <div class="sec-head__row">
-        <h2 class="split" data-split>What travelling with us includes — and what it doesn't.</h2>
-        <p class="lede">The same terms apply to all four journeys, and to any route we build with you.</p>
-      </div>
-    </div>
-    <div class="ledger">
-      <div class="ledger__col rv">
-        <h3>Included</h3>
-        <ul class="ledger__list ledger--in">
-          ${included.map(i => `<li>${icons.check}<span>${esc(i)}</span></li>`).join('')}
-        </ul>
-      </div>
-      <div class="ledger__col rv rv-d1">
-        <h3>Not included</h3>
-        <ul class="ledger__list ledger--out">
-          ${notIncluded.map(i => `<li>${icons.minus}<span>${esc(i)}</span></li>`).join('')}
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>`;
-}
-
-export function ctaSection({
-  title = 'Tell us when you\'re coming.',
-  text = 'Send a message with your dates and we\'ll come back with availability. Keep a journey exactly as it is, or change it until it fits — either way, the day is built around you.',
-  imgKey = 'mostarReflection'
-} = {}) {
-  return `
-<section class="section cta grain">
-  <div class="cta__bg">${img(imgKey, { sizes: '100vw', max: 1920 })}</div>
-  <div class="wrap">
-    <p class="eyebrow on-dark is-center rv">Info &amp; booking</p>
-    <h2 class="rv rv-d1 split" data-split>${esc(title)}</h2>
-    <p class="rv rv-d2">${esc(text)}</p>
-    <div class="cta__btns rv rv-d3">
-      <a class="btn btn--wa" href="${waGeneral}" target="_blank" rel="noopener">${icons.wa} ${esc(site.whatsapp.display)}</a>
-      <a class="btn btn--light" href="/create-your-journey/">Create your journey</a>
-    </div>
-  </div>
-</section>`;
-}
-
-export function faqSection() {
-  return `
-<section class="section" id="faq" style="background:var(--paper-2)">
-  <div class="wrap">
-    <div class="sec-head rv">
-      <p class="eyebrow">Good to know</p>
-      <div class="sec-head__row">
-        <h2 class="split" data-split>Questions, answered plainly.</h2>
-        <p class="lede">Anything else — just ask on WhatsApp. We reply to messages ourselves.</p>
-      </div>
-    </div>
-    <div class="faq rv">
-      ${faqs.map((f, i) => `
-      <details${i === 0 ? ' open' : ''}>
-        <summary>${esc(f.q)}</summary>
-        <div><p>${esc(f.a)}</p></div>
-      </details>`).join('')}
-    </div>
-  </div>
-</section>`;
+export function gallery(keys,lang){keys=keys.filter(hasPhoto);if(!keys.length)return '';const t=ui[lang];return `<section class="gallery-section" id="fotografije"><div class="section-heading compact"><p class="eyebrow">${t.gallery}</p><h2>${t.photos}</h2></div><div class="gallery-grid ${keys.length===1?'single-photo':''}">${keys.map((k,i)=>`<a class="gallery-item" href="${photoUrl(k)}" data-gallery-image data-alt="${esc(photoAlts[k][lang])}" aria-label="${esc(t.enlarge)} ${i+1}">${img(k,lang,{sizes:'(max-width: 700px) 100vw, 45vw'})}<span class="enlarge" aria-hidden="true">↗</span></a>`).join('')}</div></section>`;}
+function lightbox(lang){const t=ui[lang];return `<dialog class="lightbox" id="lightbox" role="dialog" aria-label="${esc(t.gallery)}"><button type="button" class="lightbox-close" data-close-lightbox aria-label="${esc(t.close)}">${icons.close}</button><figure><img src="/assets/img/logo.png" width="1440" height="1080" alt="" id="lightbox-image"><figcaption id="lightbox-caption" aria-live="polite"></figcaption></figure><div class="lightbox-controls"><button type="button" data-previous aria-label="${esc(t.previous)}">←</button><button type="button" data-next-photo aria-label="${esc(t.nextPhoto)}">→</button></div></dialog>`;}
+export function shareControls(lang){const t=ui[lang];return `<div class="share-controls"><button type="button" class="text-button" data-share>${t.share} ↗</button><span role="status" data-share-status></span></div>`;}
+export function layout({id='home',lang='bs',title,description,content,hero='mostarReflection',noindex=false,category=null}){
+ const t=ui[lang];const canonical=site.origin+pathFor(id,lang);const indexable=!isReview&&!noindex;
+ const crumbs=[{name:t.home,item:site.origin+pathFor('home',lang)}];if(id!=='home')crumbs.push({name:title,item:canonical});
+ const structured=[{'@type':'Organization','@id':site.origin+'/#organization',name:'Merak Tours',url:site.origin,telephone:business.phone.e164,sameAs:[business.instagram.url]}, {'@type':'WebSite','@id':site.origin+'/#website',url:site.origin,name:'Merak Tours',inLanguage:lang}, {'@type':'BreadcrumbList',itemListElement:crumbs.map((c,i)=>({'@type':'ListItem',position:i+1,name:c.name,item:c.item}))}];
+ if(category==='private-tour')structured.push({'@type':'Service',name:title,description,provider:{'@id':site.origin+'/#organization'},serviceType:t.tours,url:canonical});
+ const payload={lang,id,phone:business.phone.digits,timezone:business.activityTimeZone,translations:Object.fromEntries(['date','guests','flexible','variant','toAgree','transfer','kayakInterest','language','greeting','closing','yes','invalidDate','invalidGuests','copied','copyFallback','shared','saved','storageError','deleted','general','kayaks','custom','kayakQuestion','preferences','nature','culture','views','imageCount','noResults','familyNote','duration','hours','price'].map(k=>[k,t[k]])),products:products.map(p=>({id:p.id,title:p.localizedContent[lang].title,url:pathFor(p.id,lang),min:p.duration.min,max:p.duration.max,interests:p.interests,reason:p.localizedContent[lang].difference,capacity:p.capacity.max})),analytics:business.analytics};
+ return `<!DOCTYPE html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${esc(title)} | Merak Tours</title><meta name="description" content="${esc(description)}"><meta name="robots" content="${indexable?'index, follow':'noindex, follow'}"><link rel="canonical" href="${canonical}">${languages.map(l=>`<link rel="alternate" hreflang="${l}" href="${site.origin+pathFor(id,l)}">`).join('')}<link rel="alternate" hreflang="x-default" href="${site.origin+pathFor(id,'bs')}"><meta property="og:type" content="website"><meta property="og:title" content="${esc(title)} | Merak Tours"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${canonical}"><meta property="og:locale" content="${{bs:'bs_BA',en:'en_GB',de:'de_DE',it:'it_IT',es:'es_ES'}[lang]}"><meta property="og:image" content="${site.origin+(hasPhoto(hero)?photoUrl(hero):'/assets/img/logo.png')}"><meta name="twitter:card" content="summary_large_image"><meta name="theme-color" content="#172c27"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="preload" href="/assets/fonts/fraunces.woff2?v=20261102" as="font" type="font/woff2" crossorigin><link rel="stylesheet" href="/assets/css/merak.css?v=20261102"><script type="application/ld+json">${json({'@context':'https://schema.org','@graph':structured})}</script><script type="application/json" id="site-data">${json(payload)}</script><script src="/assets/js/merak.js?v=20261102" defer></script></head><body data-page="${id}">${header(id,lang)}<main id="main" tabindex="-1">${content}</main>${footer(lang)}${lightbox(lang)}${id==='kayaks'||id.startsWith('tour-')?`<div class="mobile-cta" hidden>${btn('#upit',id==='kayaks'?t.kayakQuestion:t.enquire,{extra:'data-cta="sticky"'})}</div>`:''}</body></html>`;
 }

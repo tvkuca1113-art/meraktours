@@ -8,7 +8,7 @@
   "headers": [
     {
       "source": "/assets/(.*)",
-      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=3600, stale-while-revalidate=86400" }]
     },
     {
       "source": "/(.*)",
@@ -19,5 +19,14 @@
         { "key": "Strict-Transport-Security", "value": "max-age=63072000; includeSubDomains; preload" }
       ]
     }
+  ],
+  "redirects": [
+    { "source": "/", "destination": "/bs/", "permanent": true },
+    { "source": "/create-your-journey/", "destination": "/en/tailor-made-tour/", "permanent": true },
+    { "source": "/credits/", "destination": "/en/photography/", "permanent": true },
+    { "source": "/tours/pocitelj-kravice-waterfalls/", "destination": "/en/private-tours/pocitelj-kravice-waterfalls/", "permanent": true },
+    { "source": "/tours/fortica-mostar-jablanica/", "destination": "/en/private-tours/fortica-mostar-jablanica/", "permanent": true },
+    { "source": "/tours/jablanica-sarajevo-old-town/", "destination": "/en/private-tours/jablanica-sarajevo/", "permanent": true },
+    { "source": "/tours/blagaj-mostar-old-town/", "destination": "/en/private-tours/blagaj-mostar/", "permanent": true }
   ]
 }

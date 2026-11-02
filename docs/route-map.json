@@ -1,0 +1,195 @@
+{
+  "pages": [
+    {
+      "id": "home",
+      "urls": {
+        "bs": "/bs/",
+        "en": "/en/",
+        "de": "/de/",
+        "it": "/it/",
+        "es": "/es/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "kayaks",
+      "urls": {
+        "bs": "/bs/kajaci/",
+        "en": "/en/kayaking/",
+        "de": "/de/kajakangebote/",
+        "it": "/it/kayak/",
+        "es": "/es/kayak/"
+      },
+      "status": "information-only"
+    },
+    {
+      "id": "tours",
+      "urls": {
+        "bs": "/bs/privatne-ture/",
+        "en": "/en/private-tours/",
+        "de": "/de/privattouren/",
+        "it": "/it/tour-privati/",
+        "es": "/es/tours-privados/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "custom",
+      "urls": {
+        "bs": "/bs/tura-po-mjeri/",
+        "en": "/en/tailor-made-tour/",
+        "de": "/de/individuelle-tour/",
+        "it": "/it/tour-su-misura/",
+        "es": "/es/tour-a-medida/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "about",
+      "urls": {
+        "bs": "/bs/o-nama/",
+        "en": "/en/about/",
+        "de": "/de/ueber-uns/",
+        "it": "/it/chi-siamo/",
+        "es": "/es/sobre-nosotros/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "contact",
+      "urls": {
+        "bs": "/bs/kontakt/",
+        "en": "/en/contact/",
+        "de": "/de/kontakt/",
+        "it": "/it/contatti/",
+        "es": "/es/contacto/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "privacy",
+      "urls": {
+        "bs": "/bs/privatnost/",
+        "en": "/en/privacy/",
+        "de": "/de/datenschutz/",
+        "it": "/it/privacy/",
+        "es": "/es/privacidad/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "terms",
+      "urls": {
+        "bs": "/bs/uslovi-upita/",
+        "en": "/en/enquiry-terms/",
+        "de": "/de/anfragebedingungen/",
+        "it": "/it/condizioni-richiesta/",
+        "es": "/es/condiciones-consulta/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "credits",
+      "urls": {
+        "bs": "/bs/fotografije/",
+        "en": "/en/photography/",
+        "de": "/de/fotografie/",
+        "it": "/it/fotografie/",
+        "es": "/es/fotografias/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "tour-01",
+      "urls": {
+        "bs": "/bs/privatne-ture/pocitelj-kravice/",
+        "en": "/en/private-tours/pocitelj-kravice-waterfalls/",
+        "de": "/de/privattouren/pocitelj-kravice/",
+        "it": "/it/tour-privati/pocitelj-cascate-kravice/",
+        "es": "/es/tours-privados/pocitelj-cascadas-kravice/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "tour-02",
+      "urls": {
+        "bs": "/bs/privatne-ture/fortica-mostar-jablanica/",
+        "en": "/en/private-tours/fortica-mostar-jablanica/",
+        "de": "/de/privattouren/fortica-mostar-jablanica/",
+        "it": "/it/tour-privati/fortica-mostar-jablanica/",
+        "es": "/es/tours-privados/fortica-mostar-jablanica/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "tour-03",
+      "urls": {
+        "bs": "/bs/privatne-ture/jablanica-sarajevo/",
+        "en": "/en/private-tours/jablanica-sarajevo/",
+        "de": "/de/privattouren/jablanica-sarajevo/",
+        "it": "/it/tour-privati/jablanica-sarajevo/",
+        "es": "/es/tours-privados/jablanica-sarajevo/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "tour-04",
+      "urls": {
+        "bs": "/bs/privatne-ture/blagaj-mostar/",
+        "en": "/en/private-tours/blagaj-mostar/",
+        "de": "/de/privattouren/blagaj-mostar/",
+        "it": "/it/tour-privati/blagaj-mostar/",
+        "es": "/es/tours-privados/blagaj-mostar/"
+      },
+      "status": "owner-review"
+    },
+    {
+      "id": "kayak-tandem",
+      "urls": {
+        "bs": "/bs/kajaci/kajak-za-dvoje/",
+        "en": "/en/kayaking/tandem-kayak/",
+        "de": "/de/kajakangebote/zweierkajak/",
+        "it": "/it/kayak/kayak-doppio/",
+        "es": "/es/kayak/kayak-doble/"
+      },
+      "status": "draft"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "/bs/",
+      "permanent": true
+    },
+    {
+      "source": "/create-your-journey/",
+      "destination": "/en/tailor-made-tour/",
+      "permanent": true
+    },
+    {
+      "source": "/credits/",
+      "destination": "/en/photography/",
+      "permanent": true
+    },
+    {
+      "source": "/tours/pocitelj-kravice-waterfalls/",
+      "destination": "/en/private-tours/pocitelj-kravice-waterfalls/",
+      "permanent": true
+    },
+    {
+      "source": "/tours/fortica-mostar-jablanica/",
+      "destination": "/en/private-tours/fortica-mostar-jablanica/",
+      "permanent": true
+    },
+    {
+      "source": "/tours/jablanica-sarajevo-old-town/",
+      "destination": "/en/private-tours/jablanica-sarajevo/",
+      "permanent": true
+    },
+    {
+      "source": "/tours/blagaj-mostar-old-town/",
+      "destination": "/en/private-tours/blagaj-mostar/",
+      "permanent": true
+    }
+  ]
+}

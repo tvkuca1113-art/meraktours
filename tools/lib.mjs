@@ -9,6 +9,7 @@ import { readFileSync, existsSync, statSync } from 'node:fs';
 import { createServer } from 'node:http';
 import { join, extname } from 'node:path';
 import { Resvg } from '@resvg/resvg-js';
+import { legacyRedirects } from '../src/routes.mjs';
 
 const MIME = {
   '.html': 'text/html;charset=utf-8', '.css': 'text/css', '.js': 'text/javascript',
@@ -36,6 +37,10 @@ export async function serve(port, root = 'dist') {
     process.exit(1);
   }
   const server = createServer((req, res) => {
+    const requestURL=new URL(req.url,'http://localhost');
+    const redirect=legacyRedirects.find(r=>r.source===requestURL.pathname||r.source===requestURL.pathname+'/');
+    if(redirect){res.writeHead(308,{location:redirect.destination+requestURL.search});return res.end();}
+    if(decodeURIComponent(requestURL.pathname).split('/').includes('..')){res.writeHead(400);return res.end();}
     const f = resolveFile(req.url, root);
     if (!f) {
       const four = resolveFile('/404/', root);
