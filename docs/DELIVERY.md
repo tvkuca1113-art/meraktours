@@ -47,9 +47,9 @@ lead event.
 Public release is deliberately blocked by unconfirmed kayak operating facts,
 photograph rights, legal/company details and final language approval, according
 to the supplied brief. Production stays on its existing version. The review is
-noindex and must keep the existing Vercel access protection. It contains one real
-Instagram photograph for owner review; this unapproved asset is not committed to
-the public GitHub repository. Normal builds do not use expiring Instagram URLs.
+noindex and must keep the existing Vercel access protection. The hosted review excludes the unapproved Instagram photograph. Its local
+owner-review copy is ignored by Git; the hosted layout uses a labelled neutral
+media panel until rights are confirmed. Normal builds do not use expiring Instagram URLs.
 
 ## Production follow-up
 
@@ -58,3 +58,17 @@ product copy, public prices and rules, approve the media manifest and language
 records, then rerun checks and the release gate. Connect only services actually
 needed. Review public robots/indexability, deep routes and sitemap on the final
 production build before promoting it to the existing domain.
+
+## Recovered delivery
+
+The interrupted handoff was recovered on 2 November 2026. The exact source tree
+was synchronized to GitHub, built successfully by Vercel and verified via HTTP
+and the cloud browser at:
+
+https://meraktours-lswnvzqh7-eminjasarevic1-4306s-projects.vercel.app/bs/
+
+The preview uses the existing Vercel project and its access settings. Production
+remains unchanged. Hosted browser checks confirmed the kayaking enquiry summary
+for three people with transfer interest and BS → DE language switching preserving
+those non-sensitive choices. No WhatsApp message was sent. A fresh build without
+unapproved kayak media passed 10 tests, HTML validation and 3,075 local references.
